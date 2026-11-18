@@ -13,6 +13,8 @@ import (
 	"time"
 
 	"github.com/hirochachacha/go-smb2"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/studio-b12/gowebdav"
 	"github.com/vmware/go-nfs-client/nfs"
 	"github.com/vmware/go-nfs-client/nfs/rpc"
@@ -189,4 +191,46 @@ func WaitFileHTTP(httpAddr, path string, timeout time.Duration) error {
 			return nil
 		}
 	}
+}
+
+// InitS3 prepares an empty bucket on a plain-HTTP S3-compatible test server:
+// it waits (up to 30s) for the server, creates the bucket if it is missing,
+// then removes every object in it. Test fixture only: the product never
+// creates buckets.
+func InitS3(endpoint, accessKey, secretKey, bucket string) error {
+	cli, err := minio.New(endpoint, &minio.Options{
+		Creds:        credentials.NewStaticV4(accessKey, secretKey, ""),
+		Secure:       false,
+		BucketLookup: minio.BucketLookupPath,
+	})
+	if err != nil {
+		return err
+	}
+	ctx := context.Background()
+	var exists bool
+	deadline := time.Now().Add(30 * time.Second)
+	for {
+		exists, err = cli.BucketExists(ctx, bucket)
+		if err == nil {
+			break
+		}
+		if time.Now().After(deadline) {
+			return fmt.Errorf("s3 server %s not ready: %w", endpoint, err)
+		}
+		time.Sleep(time.Second)
+	}
+	if !exists {
+		if err := cli.MakeBucket(ctx, bucket, minio.MakeBucketOptions{}); err != nil {
+			return err
+		}
+	}
+	for obj := range cli.ListObjects(ctx, bucket, minio.ListObjectsOptions{Recursive: true}) {
+		if obj.Err != nil {
+			return obj.Err
+		}
+		if err := cli.RemoveObject(ctx, bucket, obj.Key, minio.RemoveObjectOptions{}); err != nil {
+			return err
+		}
+	}
+	return nil
 }

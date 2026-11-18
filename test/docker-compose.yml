@@ -60,6 +60,20 @@ services:
       retries: 5
       start_period: 10s
 
+  # S3-compatible server for the S3 drive tests. MinIO no longer publishes
+  # public images, so RustFS is used; any S3-compatible server works.
+  s3:
+    image: rustfs/rustfs:latest
+    command: /data
+    environment:
+      RUSTFS_ACCESS_KEY: testkey
+      RUSTFS_SECRET_KEY: testsecret123
+      RUSTFS_ADDRESS: ":9000"
+    ports:
+      - "9000:9000"
+    networks:
+      - backend
+
   server:
     build:
       context: ..

@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"io"
 	"io/fs"
+	"math/rand"
 	"testing"
 	"time"
 
 	nfsdrive "github.com/fregie/img_syncer/server/drive/nfs"
+	"github.com/fregie/img_syncer/server/drive/s3"
 	"github.com/fregie/img_syncer/server/drive/smb"
 	"github.com/fregie/img_syncer/server/drive/webdav"
 	"github.com/fregie/img_syncer/server/imgmanager"
@@ -30,6 +32,12 @@ const (
 
 	nfsUrl      = "192.168.23.10:/nfs"
 	nfsRootPath = "storage"
+
+	s3Endpoint = "127.0.0.1:9000"
+	s3Access   = "testkey"
+	s3Secret   = "testsecret123"
+	s3Bucket   = "whaleshot-test"
+	s3Root     = "storage"
 )
 
 type DriveTest struct {
@@ -86,6 +94,7 @@ func (d *DriveTest) TestAllDrives() {
 				return dri, func() { dri.Close() }
 			},
 		},
+		{"S3", func(d *DriveTest) (imgmanager.StorageDrive, func()) { return d.newS3() }},
 	}
 	for _, tt := range tests {
 		d.Run(tt.name, func() {
@@ -272,4 +281,84 @@ func (d *DriveTest) testRangeEarlyStop(dri imgmanager.StorageDrive) {
 	})
 	d.Nilf(err, "range early stop failed: %v", err)
 	d.Equal(2, count, "expected 2 files collected before early stop, got %d", count)
+}
+
+// newS3 returns a drive on an empty test bucket (see test/docker-compose.yml).
+func (d *DriveTest) newS3() (imgmanager.StorageDrive, func()) {
+	err := testutil.InitS3(s3Endpoint, s3Access, s3Secret, s3Bucket)
+	d.Require().Nilf(err, "init s3 failed: %v", err)
+	dri, err := s3.NewS3Drive(s3.Config{
+		Endpoint: s3Endpoint, Bucket: s3Bucket,
+		AccessKey: s3Access, SecretKey: s3Secret,
+		RootPrefix: s3Root, UseSSL: false, PathStyle: true,
+	})
+	d.Require().Nilf(err, "new s3 drive failed: %v", err)
+	return dri, func() { dri.Close() }
+}
+
+func (d *DriveTest) TestS3_SpecialNames() {
+	dri, cleanup := d.newS3()
+	defer cleanup()
+	names := []string{"IMG 0001 (1).jpg", "a+b#c.jpg", "日本.jpg"}
+	for _, name := range names {
+		path := "/2024/01/02/" + name
+		err := dri.Upload(path, io.NopCloser(bytes.NewReader(static.Pic1)), int64(len(static.Pic1)), time.Now())
+		d.Require().Nilf(err, "upload %q failed: %v", name, err)
+		exist, err := dri.IsExist(path)
+		d.Nil(err)
+		d.Truef(exist, "%q should exist", name)
+		downloadCheck(d, dri, path)
+	}
+	var got []string
+	err := dri.Range("/2024/01/02", func(fi fs.FileInfo) bool {
+		got = append(got, fi.Name())
+		return true
+	})
+	d.Nil(err)
+	d.ElementsMatch(names, got)
+	for _, name := range names {
+		path := "/2024/01/02/" + name
+		d.Nil(dri.Delete(path))
+		exist, err := dri.IsExist(path)
+		d.Nil(err)
+		d.Falsef(exist, "%q should be deleted", name)
+	}
+}
+
+func (d *DriveTest) TestS3_LargeObjectRange() {
+	dri, cleanup := d.newS3()
+	defer cleanup()
+	const size = 17 << 20 // above the multipart threshold
+	data := make([]byte, size)
+	rand.New(rand.NewSource(1)).Read(data)
+	path := "/video/big.mp4"
+	err := dri.Upload(path, io.NopCloser(bytes.NewReader(data)), size, time.Now())
+	d.Require().Nilf(err, "upload failed: %v", err)
+
+	const off = 9 << 20
+	r, length, err := dri.DownloadWithOffset(path, off)
+	d.Require().Nilf(err, "offset download failed: %v", err)
+	chunk := make([]byte, 1<<20)
+	_, err = io.ReadFull(r, chunk)
+	r.Close()
+	d.Nil(err)
+	d.True(bytes.Equal(data[off:off+(1<<20)], chunk), "ranged bytes mismatch")
+	d.Equal(int64(size), length)
+
+	r, length, err = dri.Download(path)
+	d.Require().Nilf(err, "download failed: %v", err)
+	full, err := io.ReadAll(r)
+	r.Close()
+	d.Nil(err)
+	d.True(bytes.Equal(data, full), "full download mismatch")
+	d.Equal(int64(size), length)
+}
+
+func (d *DriveTest) TestS3_RangeMissingDir() {
+	dri, cleanup := d.newS3()
+	defer cleanup()
+	calls := 0
+	err := dri.Range("/does/not/exist", func(fs.FileInfo) bool { calls++; return true })
+	d.Nil(err)
+	d.Equal(0, calls)
 }

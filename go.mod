@@ -6,6 +6,7 @@ toolchain go1.25.4
 
 require (
 	github.com/fregie/PrintVersion v0.1.0
+	github.com/minio/minio-go/v7 v7.3.0
 	golang.org/x/crypto v0.55.0
 	golang.org/x/mobile v0.0.0-20260709172247-6129f5bee9d5
 	google.golang.org/grpc v1.63.0
@@ -27,7 +28,6 @@ require (
 	github.com/klauspost/crc32 v1.3.0 // indirect
 	github.com/minio/crc64nvme v1.1.1 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
-	github.com/minio/minio-go/v7 v7.3.0 // indirect
 	github.com/philhofer/fwd v1.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rasky/go-xdr v0.0.0-20170124162913-1a41d1a06c93 // indirect
