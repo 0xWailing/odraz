@@ -205,9 +205,9 @@ class WebDavFormState extends State<WebDavForm> {
     children.add(
         input('${l10n.password} (${l10n.optional})', passwordController, null));
     children.add(CheckboxListTile(
-      title: const Text('跳过 TLS 证书验证'),
+      title: const Text('Skip TLS certificate verification'),
       subtitle: insecure
-          ? Text('⚠️ 跳过验证有安全风险',
+          ? Text('⚠️ Skipping verification is a security risk',
               style: TextStyle(color: Theme.of(context).colorScheme.error))
           : null,
       value: insecure,

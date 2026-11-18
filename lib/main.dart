@@ -143,7 +143,9 @@ class MyApp extends StatelessWidget {
                 darkTheme: darkTheme,
                 themeMode: ThemeMode.light,
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
-                supportedLocales: AppLocalizations.supportedLocales,
+                // English only for now. The Chinese translations (app_zh.arb) are kept
+                // in the repo but disabled here; re-add Locale('zh') to enable them.
+                supportedLocales: const [Locale('en')],
               );
             });
       },
@@ -172,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           syncedIds == '[]' &&
           lastRefresh != null &&
           lastRefresh != 0) {
-        SnackBarManager.showSnackBar("之前同步状态丢失，建议连接 WiFi 后保持应用前台以重新校验同步状态");
+        SnackBarManager.showSnackBar("Previous sync state was lost. Connect to WiFi and keep the app in the foreground to re-verify sync status.");
       }
     });
     SharedPreferences.getInstance().then((prefs) async {
