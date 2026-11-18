@@ -59,6 +59,9 @@ Android is the primary target. The iOS, Linux, macOS and Windows code is inherit
 - [x] SMB, WebDAV and NFS sync (inherited from Pho)
 - [ ] S3-compatible drive backend in the Go server (`server/drive/s3`)
 - [ ] S3 settings in the app (endpoint, region, bucket, credentials, path-style addressing)
+  - The bucket must be created by you beforehand and should be empty; Whaleshot does not create buckets
+  - S3 credentials are stored unencrypted in the app's preferences at first
+- [ ] Encrypt stored credentials (S3 and other drives) in the app
 - [ ] Tests against a containerized S3 server (e.g. MinIO) in `test/docker-compose.yml`
 - [ ] Keep the existing date-based object layout and `.thumbnail/` prefix on S3
 - [ ] Prefix-based listing for S3 (`LIST` with prefix/delimiter) with result caching, instead of re-walking the whole date tree on every call
