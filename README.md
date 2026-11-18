@@ -2,119 +2,113 @@
 <img src="assets/icon/pho_icon.png" width="150">
 </p>
 <h3 align="center">
-Pho - 一个用于查看和上传照片的无服务端应用
+Whaleshot - view your photos and sync them to your own storage
 </h3>
-<p align="center">
-  <img src="https://github.com/fregie/pho/actions/workflows/go_test.yml/badge.svg">
-</p>
-<p align="center">
-  <a href="README.md">中文</a> | <a href="README_EN.md">English</a>
-</p>
 
-### 安装
+> **Whaleshot is a fork of [Pho](https://github.com/fregie/pho) by fregie.**
+> The goal: keep everything the open-source edition of Pho already does, and add
+> **S3-compatible storage** as a synchronization target.
 
-**开源版**（仅 Android APK）：
-- [下载 APK](https://github.com/fregie/pho/releases) — 仅含 SMB / WebDAV / NFS，无 Pro 功能
+## About this fork
 
-**Pro 版**（含全部功能，需付费）：
-- [App Store](https://apps.apple.com/cn/app/pho-%E5%90%8C%E6%AD%A5%E7%85%A7%E7%89%87%E5%88%B0nas-%E7%BD%91%E7%9B%98/id6451428709) — iOS 版，支持 AES 加密、并行上传、筛选器、百度网盘等
-- [Google Play](https://play.google.com/store/apps/details?id=com.fregie.pho) — Android 版，支持 AES 加密、并行上传、筛选器、百度网盘等
+Pho is a simple, serverless app that replaces the phone's native gallery and syncs photos to
+network storage without any database or server-side component. Whaleshot keeps that design and
+all existing features unchanged.
 
-> 开源仓库仅提供 APK 下载。iOS 用户请前往 App Store、Android 用户请前往 Google Play 下载 Pro 版（支持免费试用基础功能后购买 Pro）。
+What this fork adds:
 
-### 介绍
-该应用的目的是替代手机上的自带相册应用,并且能够将照片同步到网络储存.  
-功能简单,只是用于查看照片以及同步照片到网络储存.试图做到优秀的体验.
+- **S3-compatible storage as a sync option** (AWS S3, MinIO, Cloudflare R2, Backblaze B2, Ceph, etc.)
 
-### 功能
-* 本地照片查看
-* 云端照片查看
-* 增量同步照片到云端
-* 后台定期同步
-* 无数据库,无服务端
-* 以时间组织云端存储的目录结构
+S3 support is **not implemented yet** — upstream Pho has no S3 backend, and nothing in this repo
+provides one today. See the [roadmap](#roadmap) for the plan.
 
-### 支持的网络储存
-- [x] Samba
-- [x] Webdav
-- [x] NFS
-- [ ] 阿里网盘
-- [ ] oneDrive
-- [ ] google drive
-- [ ] google photo
+## Features
 
-### 与 Pro 版本差异
-本仓库为 Pho 开源版,仅包含核心的照片查看与同步功能.以下功能仅在 Pro 版本中提供(未开源):
+Inherited from Pho:
 
-- AES 加密上传(支持 AES-128-CFB 与 AES-256-GCM,加密视频支持 Range 播放)
-- 并行上传调优(多文件并发上传)
-- 文件筛选器(按类型/日期等条件过滤同步)
-- 目录结构配置(可选 `YYYY/MM/DD` 或 `YYYYMMDD` 组织方式)
-- 主题色自定义
-- 百度网盘支持
+* Local photo browsing
+* Cloud photo browsing
+* Incremental photo synchronization to the cloud
+* Background periodic synchronization
+* Image zoom, video upload and browsing
+* No database, no server-side
+* Cloud directory structure organized by date
 
-开源版仅支持 Samba / WebDAV / NFS 三种网络储存.
+## Supported storage
 
-Pro 版在 App Store 和 Google Play 提供： [App Store](https://apps.apple.com/cn/app/id6451428709) / [Google Play](https://play.google.com/store/apps/details?id=com.fregie.pho)
+| Backend | Status |
+|---|---|
+| Samba (SMB) | Supported (from Pho) |
+| WebDAV | Supported (from Pho) |
+| NFS | Supported (from Pho) |
+| S3-compatible | Planned (this fork) |
 
-### Screenshots
+Android is the primary target. The iOS, Linux, macOS and Windows code is inherited from Pho but is not maintained or tested in this fork.
+
+## Screenshots
+
 <p align="left">
-<img src="assets/screenshot/screenshot_local.png" width="220" alt="本地相册">
-<img src="assets/screenshot/screenshot_cloud.png" width="220" alt="云端相册">
-<img src="assets/screenshot/screenshot_sync.png" width="220" alt="同步页面">
-<img src="assets/screenshot/screenshot_view.png" width="220" alt="照片查看">
+<img src="assets/screenshot/screenshot_local.png" width="220" alt="Local Gallery">
+<img src="assets/screenshot/screenshot_cloud.png" width="220" alt="Cloud Gallery">
+<img src="assets/screenshot/screenshot_sync.png" width="220" alt="Sync Page">
+<img src="assets/screenshot/screenshot_view.png" width="220" alt="Photo Viewer">
 </p>
 
-### roadmap
-- [x] 支持放大/缩小图片
-- [x] 支持上传/浏览视频
-- [x] 支持NFS
-- [x] 支持IOS端
-- [ ] 支持desktop端
-- [x] 支持中文
+## Roadmap
 
-### 构建
-#### 环境要求
+- [x] SMB, WebDAV and NFS sync (inherited from Pho)
+- [ ] S3-compatible drive backend in the Go server (`server/drive/s3`)
+- [ ] S3 settings in the app (endpoint, region, bucket, credentials, path-style addressing)
+- [ ] Tests against a containerized S3 server (e.g. MinIO) in `test/docker-compose.yml`
+- [ ] Keep the existing date-based object layout and `.thumbnail/` prefix on S3
+- [ ] Prefix-based listing for S3 (`LIST` with prefix/delimiter) with result caching, instead of re-walking the whole date tree on every call
+- [ ] Disk cache for cloud thumbnails, to cut repeat S3 requests while scrolling
+- [ ] Generate thumbnails on demand for photos that were added to the bucket by other tools
+- [ ] Encryption settings UI (enable, AES-256-GCM, password) for the existing server-side encryption
+- [ ] Replace the iterative-MD5 key derivation with PBKDF2 or Argon2, keeping old encrypted files readable
+
+## Build
+
+### Requirements
 - Flutter: 3.41.4 (stable), Dart: 3.11.1
 - Go: 1.25 (toolchain go1.25.4)
 - JDK: 17
 - Android SDK: compileSdk 36
-- Android NDK: 用于构建嵌入式 Go 服务端 (gomobile bind)
-- protoc + 插件: protoc-gen-go@v1.27.1, protoc-gen-go-grpc@v1.1.0, protoc_plugin@21.1.2 (Dart)
+- Android NDK: used to build the embedded Go server (gomobile bind)
+- protoc + plugins: protoc-gen-go@v1.27.1, protoc-gen-go-grpc@v1.1.0, protoc_plugin@21.1.2 (Dart)
 
-#### 构建步骤
+### Steps
 ```bash
-# 1. 生成 protobuf 代码 (Go + Dart stubs)
-make prebuild      # 安装 protoc 插件
+# 1. Generate protobuf code (Go + Dart stubs)
+make prebuild      # install protoc plugins
 make protobuf
 
-# 2. 构建嵌入式 Go 服务端
-make server-aar     # Android: android/app/libs/server.aar (需 gomobile)
+# 2. Build the embedded Go server
+make server-aar     # Android: android/app/libs/server.aar (needs gomobile)
 make server-ios     # iOS: ios/Frameworks/RUN.xcframework
 make server-linux   # Linux: linux/lib/run.so
 make server-windows # Windows: windows/lib/run.dll
 
-# 3. 构建 Flutter 应用
+# 3. Build the Flutter app
 make apk           # Android APK
 make ipa           # iOS IPA
 
-# 4. 运行测试 (需要 Docker 用于 SMB/WebDAV/NFS 测试容器)
+# 4. Run tests (Docker is required for the SMB/WebDAV/NFS test containers)
 make test
 ```
 
-> 注: `flutter run` 不会自动构建 `android/app/libs/server.aar`,需先执行 `make server-aar`,否则 Go 服务端无法启动.
+> Note: `flutter run` does not build `android/app/libs/server.aar` automatically. Run
+> `make server-aar` first, otherwise the Go server will not start.
 
-### Contribute
-感谢各位的积极反馈
+## File storage logic
 
-给本项目提需求的还不少,但是我一个人精力有限,如果你有兴趣,欢迎加入.
+Files are stored using the date as the directory structure and the source file name as the
+filename. A `.thumbnail` directory is created in the root directory to hold generated
+thumbnails, mirroring the structure of the source files.
 
-可以在issue中回复沟通,帮忙一起做一些功能,提出你的pull request.
+You can access and use your backed-up photos in any other way at any time, without depending on
+this application.
 
-### 文件储存逻辑
-本着尽可能简单的逻辑来储存文件,以时间为目录结构,以文件名为文件名储存源文件.在根目录创建一个`.thumbnail`目录来储存生成的缩略图,缩略图的目录结构与源文件相同.  
-你可以随时以其他形式利用你备份上去的照片,而不用依赖此app.
-目录结构示意图:
 ```bash
 ├── 2022
 │   ├── 07
@@ -145,7 +139,22 @@ make test
                  └── 20220703_112338.DNG
 ```
 
+## Differences from upstream Pho
 
-### Star History
+This fork is based on the open-source edition of Pho. Features that upstream ships only in its
+Pro edition (parallel upload tuning, filters, Baidu Netdisk, etc.) are not part of this repository.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=fregie/pho&type=Date)](https://star-history.com/#fregie/pho&Date)
+AES encryption is a partial case: the server-side engine (AES-256-GCM and legacy AES-128-CFB in
+`server/imgmanager/encrypt.go`) and the client plumbing are present, but the settings UI to turn it
+on was removed upstream. Restoring that UI is on the [roadmap](#roadmap).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Issues and pull requests are welcome, especially for the S3
+backend.
+
+## License and credits
+
+Released under the license in [LICENSE](LICENSE). Whaleshot is derived from
+[fregie/pho](https://github.com/fregie/pho); all credit for the original application goes to its
+author and contributors.
