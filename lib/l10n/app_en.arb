@@ -103,7 +103,7 @@
   "onboardingWelcome": "Welcome to Pho",
   "onboardingWelcomeDesc": "Your serverless photo sync tool",
   "onboardingSyncTitle": "Sync to your storage",
-  "onboardingSyncDesc": "Supports SMB, WebDAV and NFS. Photos organized by date automatically",
+  "onboardingSyncDesc": "Supports SMB, WebDAV, NFS and S3. Photos organized by date automatically",
   "onboardingPrivacyTitle": "Your data, your control",
   "onboardingPrivacyDesc": "No server, no database. Files stored directly in your network storage",
   "onboardingSkip": "Skip",
@@ -140,5 +140,18 @@
   "bgSyncSuccessNotificationBody": "Successfully synced {count} photos",
   "@bgSyncSuccessNotificationBody": { "placeholders": { "count": { "type": "int" } } },
   "bgSyncSuccessNotificationBodyWithFailures": "Successfully synced {succeeded} photos ({failed} failed)",
-  "@bgSyncSuccessNotificationBodyWithFailures": { "placeholders": { "succeeded": { "type": "int" }, "failed": { "type": "int" } } }
+  "@bgSyncSuccessNotificationBodyWithFailures": { "placeholders": { "succeeded": { "type": "int" }, "failed": { "type": "int" } } },
+"s3Endpoint": "Endpoint",
+"s3EndpointHint": "eg: s3.us-west-004.backblazeb2.com",
+"s3Region": "Region",
+"s3RegionHint": "Optional, eg: us-west-004",
+"s3Bucket": "Bucket",
+"s3BucketHint": "The bucket must already exist and should be empty.",
+"s3AccessKey": "Access key",
+"s3SecretKey": "Secret key",
+"s3RootPrefix": "Root prefix",
+"s3RootPrefixHint": "Optional, eg: photos",
+"s3UseSsl": "Use HTTPS (TLS)",
+"s3PathStyle": "Path-style addressing",
+"s3PathStyleHint": "Turn off for AWS S3; keep on for Backblaze B2, MinIO and most others."
 }

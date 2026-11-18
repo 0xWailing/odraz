@@ -332,7 +332,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingSyncDesc =>
-      'Supports SMB, WebDAV and NFS. Photos organized by date automatically';
+      'Supports SMB, WebDAV, NFS and S3. Photos organized by date automatically';
 
   @override
   String get onboardingPrivacyTitle => 'Your data, your control';
@@ -453,4 +453,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String bgSyncSuccessNotificationBodyWithFailures(int succeeded, int failed) {
     return 'Successfully synced $succeeded photos ($failed failed)';
   }
+
+  @override
+  String get s3Endpoint => 'Endpoint';
+
+  @override
+  String get s3EndpointHint => 'eg: s3.us-west-004.backblazeb2.com';
+
+  @override
+  String get s3Region => 'Region';
+
+  @override
+  String get s3RegionHint => 'Optional, eg: us-west-004';
+
+  @override
+  String get s3Bucket => 'Bucket';
+
+  @override
+  String get s3BucketHint =>
+      'The bucket must already exist and should be empty.';
+
+  @override
+  String get s3AccessKey => 'Access key';
+
+  @override
+  String get s3SecretKey => 'Secret key';
+
+  @override
+  String get s3RootPrefix => 'Root prefix';
+
+  @override
+  String get s3RootPrefixHint => 'Optional, eg: photos';
+
+  @override
+  String get s3UseSsl => 'Use HTTPS (TLS)';
+
+  @override
+  String get s3PathStyle => 'Path-style addressing';
+
+  @override
+  String get s3PathStyleHint =>
+      'Turn off for AWS S3; keep on for Backblaze B2, MinIO and most others.';
 }

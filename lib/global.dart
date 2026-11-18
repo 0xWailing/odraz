@@ -251,6 +251,35 @@ Future<void> initDrive() async {
         }
       }
       break;
+    case Drive.s3:
+      final endpoint = prefs.getString('s3_endpoint');
+      final bucket = prefs.getString('s3_bucket');
+      final accessKey = prefs.getString('s3_access_key');
+      final secretKey = prefs.getString('s3_secret_key');
+      if (endpoint != null &&
+          bucket != null &&
+          accessKey != null &&
+          secretKey != null) {
+        final rsp = await storage.cli.setDriveS3(SetDriveS3Request(
+          endpoint: endpoint,
+          region: prefs.getString('s3_region') ?? '',
+          bucket: bucket,
+          accessKey: accessKey,
+          secretKey: secretKey,
+          root: prefs.getString('s3_root_prefix') ?? '',
+          useSsl: prefs.getBool('s3_use_ssl') ?? true,
+          pathStyle: prefs.getBool('s3_path_style') ?? true,
+        ));
+        if (rsp.success) {
+          logger.addLog("set drive s3 success");
+          settingModel.setRemoteStorageSetted(true);
+          eventBus.fire(RemoteRefreshEvent(refreshUnSync: false));
+        } else {
+          settingModel.setRemoteStorageSetted(false);
+          assetModel.remoteLastError = rsp.message;
+        }
+      }
+      break;
   }
 }
 

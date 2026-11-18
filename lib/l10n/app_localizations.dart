@@ -725,7 +725,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingSyncDesc.
   ///
   /// In en, this message translates to:
-  /// **'Supports SMB, WebDAV and NFS. Photos organized by date automatically'**
+  /// **'Supports SMB, WebDAV, NFS and S3. Photos organized by date automatically'**
   String get onboardingSyncDesc;
 
   /// No description provided for @onboardingPrivacyTitle.
@@ -937,6 +937,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Successfully synced {succeeded} photos ({failed} failed)'**
   String bgSyncSuccessNotificationBodyWithFailures(int succeeded, int failed);
+
+  /// No description provided for @s3Endpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoint'**
+  String get s3Endpoint;
+
+  /// No description provided for @s3EndpointHint.
+  ///
+  /// In en, this message translates to:
+  /// **'eg: s3.us-west-004.backblazeb2.com'**
+  String get s3EndpointHint;
+
+  /// No description provided for @s3Region.
+  ///
+  /// In en, this message translates to:
+  /// **'Region'**
+  String get s3Region;
+
+  /// No description provided for @s3RegionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional, eg: us-west-004'**
+  String get s3RegionHint;
+
+  /// No description provided for @s3Bucket.
+  ///
+  /// In en, this message translates to:
+  /// **'Bucket'**
+  String get s3Bucket;
+
+  /// No description provided for @s3BucketHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The bucket must already exist and should be empty.'**
+  String get s3BucketHint;
+
+  /// No description provided for @s3AccessKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Access key'**
+  String get s3AccessKey;
+
+  /// No description provided for @s3SecretKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Secret key'**
+  String get s3SecretKey;
+
+  /// No description provided for @s3RootPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Root prefix'**
+  String get s3RootPrefix;
+
+  /// No description provided for @s3RootPrefixHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional, eg: photos'**
+  String get s3RootPrefixHint;
+
+  /// No description provided for @s3UseSsl.
+  ///
+  /// In en, this message translates to:
+  /// **'Use HTTPS (TLS)'**
+  String get s3UseSsl;
+
+  /// No description provided for @s3PathStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Path-style addressing'**
+  String get s3PathStyle;
+
+  /// No description provided for @s3PathStyleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off for AWS S3; keep on for Backblaze B2, MinIO and most others.'**
+  String get s3PathStyleHint;
 }
 
 class _AppLocalizationsDelegate
