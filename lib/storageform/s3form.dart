@@ -30,12 +30,16 @@ class S3FormState extends State<S3Form> {
   bool pathStyle = true;
   bool pathStyleTouched = false;
   bool testSuccess = false;
+  bool testing = false;
   String? errormsg;
 
   @override
   void initState() {
     super.initState();
     _endpoint.addListener(_onEndpointChanged);
+    for (final c in [_region, _bucket, _accessKey, _secretKey, _rootPrefix]) {
+      c.addListener(_invalidateTest);
+    }
     SharedPreferences.getInstance().then((prefs) {
       if (!mounted) return;
       _endpoint.text = prefs.getString('s3_endpoint') ?? '';
@@ -70,7 +74,14 @@ class S3FormState extends State<S3Form> {
     super.dispose();
   }
 
+  /// Save is only offered for exactly the values that passed the test, so any
+  /// later edit requires testing again.
+  void _invalidateTest() {
+    if (testSuccess) setState(() => testSuccess = false);
+  }
+
   void _onEndpointChanged() {
+    _invalidateTest();
     if (pathStyleTouched) return;
     final next = defaultPathStyleFor(_endpoint.text);
     if (next != pathStyle) setState(() => pathStyle = next);
@@ -90,16 +101,21 @@ class S3FormState extends State<S3Form> {
   Future<void> testStorage() async {
     setState(() {
       testSuccess = false;
+      testing = true;
       errormsg = null;
     });
     try {
       final rsp = await storage.cli.setDriveS3(_request());
+      if (!mounted) return;
       setState(() {
         testSuccess = rsp.success;
         errormsg = rsp.success ? null : rsp.message;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => errormsg = e.toString());
+    } finally {
+      if (mounted) setState(() => testing = false);
     }
   }
 
@@ -170,7 +186,10 @@ class S3FormState extends State<S3Form> {
           SwitchListTile(
             title: Text(l10n.s3UseSsl),
             value: useSsl,
-            onChanged: (v) => setState(() => useSsl = v),
+            onChanged: (v) => setState(() {
+              useSsl = v;
+              testSuccess = false;
+            }),
           ),
           SwitchListTile(
             title: Text(l10n.s3PathStyle),
@@ -179,6 +198,7 @@ class S3FormState extends State<S3Form> {
             onChanged: (v) => setState(() {
               pathStyle = v;
               pathStyleTouched = true;
+              testSuccess = false;
             }),
           ),
           Row(
@@ -190,13 +210,16 @@ class S3FormState extends State<S3Form> {
                     horizontal: AppSpacing.paddingLarge,
                     vertical: AppSpacing.paddingSmall),
                 child: FilledButton.tonal(
-                  onPressed: () => testStorage().then((_) {
-                    if (testSuccess) {
-                      SnackBarManager.showSnackBar(l10n.testSuccess);
-                    } else if (errormsg != null && mounted) {
-                      _showErrorDialog(errormsg!);
-                    }
-                  }),
+                  onPressed: testing
+                      ? null
+                      : () => testStorage().then((_) {
+                            if (!mounted) return;
+                            if (testSuccess) {
+                              SnackBarManager.showSnackBar(l10n.testSuccess);
+                            } else if (errormsg != null) {
+                              _showErrorDialog(errormsg!);
+                            }
+                          }),
                   child: Text(l10n.testStorage),
                 ),
               ),

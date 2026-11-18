@@ -84,4 +84,40 @@ void main() {
     await tester.pump();
     expect(pathStyle().value, isFalse, reason: 'user choice must stick');
   });
+
+  testWidgets('editing anything after a successful test disables Save',
+      (tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.pumpAndSettle();
+    final state = tester.state<S3FormState>(find.byType(S3Form));
+
+    FilledButton saveButton() =>
+        tester.widget<FilledButton>(find.widgetWithText(FilledButton, 'Save'));
+    void markTested() {
+      // ignore: invalid_use_of_protected_member
+      state.setState(() => state.testSuccess = true);
+    }
+
+    markTested();
+    await tester.pump();
+    expect(saveButton().onPressed, isNotNull, reason: 'enabled after a test');
+
+    await tester.enterText(find.widgetWithText(TextFormField, 'Bucket'), 'x');
+    await tester.pump();
+    expect(saveButton().onPressed, isNull, reason: 'field edit invalidates');
+
+    markTested();
+    await tester.pump();
+    await tester.ensureVisible(find.text('Use HTTPS (TLS)'));
+    await tester.tap(find.text('Use HTTPS (TLS)'));
+    await tester.pump();
+    expect(saveButton().onPressed, isNull, reason: 'TLS switch invalidates');
+
+    markTested();
+    await tester.pump();
+    await tester.ensureVisible(find.text('Path-style addressing'));
+    await tester.tap(find.text('Path-style addressing'));
+    await tester.pump();
+    expect(saveButton().onPressed, isNull, reason: 'path-style invalidates');
+  });
 }
