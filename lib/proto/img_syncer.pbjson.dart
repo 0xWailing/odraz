@@ -405,6 +405,43 @@ final $typed_data.Uint8List listDriveNFSDirResponseDescriptor = $convert.base64D
     'ChdMaXN0RHJpdmVORlNEaXJSZXNwb25zZRIYCgdzdWNjZXNzGAEgASgIUgdzdWNjZXNzEhgKB2'
     '1lc3NhZ2UYAiABKAlSB21lc3NhZ2USEgoEZGlycxgDIAMoCVIEZGlycw==');
 
+@$core.Deprecated('Use setDriveS3RequestDescriptor instead')
+const SetDriveS3Request$json = {
+  '1': 'SetDriveS3Request',
+  '2': [
+    {'1': 'endpoint', '3': 1, '4': 1, '5': 9, '10': 'endpoint'},
+    {'1': 'region', '3': 2, '4': 1, '5': 9, '10': 'region'},
+    {'1': 'bucket', '3': 3, '4': 1, '5': 9, '10': 'bucket'},
+    {'1': 'access_key', '3': 4, '4': 1, '5': 9, '10': 'accessKey'},
+    {'1': 'secret_key', '3': 5, '4': 1, '5': 9, '10': 'secretKey'},
+    {'1': 'root', '3': 6, '4': 1, '5': 9, '10': 'root'},
+    {'1': 'use_ssl', '3': 7, '4': 1, '5': 8, '10': 'useSsl'},
+    {'1': 'path_style', '3': 8, '4': 1, '5': 8, '10': 'pathStyle'},
+  ],
+};
+
+/// Descriptor for `SetDriveS3Request`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setDriveS3RequestDescriptor = $convert.base64Decode(
+    'ChFTZXREcml2ZVMzUmVxdWVzdBIaCghlbmRwb2ludBgBIAEoCVIIZW5kcG9pbnQSFgoGcmVnaW'
+    '9uGAIgASgJUgZyZWdpb24SFgoGYnVja2V0GAMgASgJUgZidWNrZXQSHQoKYWNjZXNzX2tleRgE'
+    'IAEoCVIJYWNjZXNzS2V5Eh0KCnNlY3JldF9rZXkYBSABKAlSCXNlY3JldEtleRISCgRyb290GA'
+    'YgASgJUgRyb290EhcKB3VzZV9zc2wYByABKAhSBnVzZVNzbBIdCgpwYXRoX3N0eWxlGAggASgI'
+    'UglwYXRoU3R5bGU=');
+
+@$core.Deprecated('Use setDriveS3ResponseDescriptor instead')
+const SetDriveS3Response$json = {
+  '1': 'SetDriveS3Response',
+  '2': [
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+    {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
+  ],
+};
+
+/// Descriptor for `SetDriveS3Response`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setDriveS3ResponseDescriptor = $convert.base64Decode(
+    'ChJTZXREcml2ZVMzUmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIYCgdtZXNzYW'
+    'dlGAIgASgJUgdtZXNzYWdl');
+
 @$core.Deprecated('Use pingRequestDescriptor instead')
 const PingRequest$json = {
   '1': 'PingRequest',
