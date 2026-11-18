@@ -33,5 +33,9 @@ func ParseEndpoint(raw string, useSSL bool) (host string, ssl bool, err error) {
 // object key: forward slashes, cleaned, never starting with "/".
 func objectKey(rootPrefix, p string) string {
 	joined := path.Join(filepath.ToSlash(rootPrefix), filepath.ToSlash(p))
-	return strings.TrimPrefix(joined, "/")
+	key := strings.TrimPrefix(joined, "/")
+	if key == "." { // ImgManager lists the library root as "."
+		return ""
+	}
+	return key
 }

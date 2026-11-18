@@ -51,6 +51,9 @@ func TestObjectKey(t *testing.T) {
 		{"", "", ""},
 		{"", "/", ""},
 		{"photos", "", "photos"},
+		{"", ".", ""},
+		{"photos", ".", "photos"},
+		{"", "./", ""},
 	}
 	for _, tt := range tests {
 		if got := objectKey(tt.root, tt.p); got != tt.want {

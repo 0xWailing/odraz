@@ -362,3 +362,58 @@ func (d *DriveTest) TestS3_RangeMissingDir() {
 	d.Nil(err)
 	d.Equal(0, calls)
 }
+
+// The root of the library is listed as "." by ImgManager.RangeByDate; with an
+// empty root prefix that must list the bucket root, not a literal "./" prefix.
+func (d *DriveTest) TestS3_EmptyRootPrefix() {
+	err := testutil.InitS3(s3Endpoint, s3Access, s3Secret, s3Bucket)
+	d.Require().Nilf(err, "init s3 failed: %v", err)
+	dri, err := s3.NewS3Drive(s3.Config{
+		Endpoint: s3Endpoint, Bucket: s3Bucket,
+		AccessKey: s3Access, SecretKey: s3Secret,
+		RootPrefix: "", UseSSL: false, PathStyle: true,
+	})
+	d.Require().Nilf(err, "new s3 drive failed: %v", err)
+	defer dri.Close()
+	path := "/2024/01/02/a.jpg"
+	err = dri.Upload(path, io.NopCloser(bytes.NewReader(static.Pic1)), int64(len(static.Pic1)), time.Now())
+	d.Require().Nilf(err, "upload failed: %v", err)
+
+	for _, dir := range []string{".", "/", ""} {
+		var years []string
+		err = dri.Range(dir, func(fi fs.FileInfo) bool {
+			if fi.IsDir() {
+				years = append(years, fi.Name())
+			}
+			return true
+		})
+		d.Nilf(err, "range %q failed: %v", dir, err)
+		d.Containsf(years, "2024", "range %q should list the year directory, got %v", dir, years)
+	}
+}
+
+// Pins the user-visible behavior: a photo uploaded through ImgManager is found
+// again by RangeByDate when the S3 root prefix is empty.
+func (d *DriveTest) TestS3_EmptyRootPrefixLibraryBrowse() {
+	err := testutil.InitS3(s3Endpoint, s3Access, s3Secret, s3Bucket)
+	d.Require().Nilf(err, "init s3 failed: %v", err)
+	dri, err := s3.NewS3Drive(s3.Config{
+		Endpoint: s3Endpoint, Bucket: s3Bucket,
+		AccessKey: s3Access, SecretKey: s3Secret,
+		RootPrefix: "", UseSSL: false, PathStyle: true,
+	})
+	d.Require().Nilf(err, "new s3 drive failed: %v", err)
+	im := imgmanager.NewImgManager(imgmanager.Option{WorkerNum: 1})
+	im.SetDrive(dri)
+	taken := time.Date(2024, 1, 2, 3, 4, 5, 0, time.UTC)
+	err = im.Upload(io.NopCloser(bytes.NewReader(static.Pic1)), int64(len(static.Pic1)), "pic.jpg", taken)
+	d.Require().Nilf(err, "upload failed: %v", err)
+
+	var found []string
+	err = im.RangeByDate(taken.Add(48*time.Hour), func(info imgmanager.ImgInfo) bool {
+		found = append(found, info.Path)
+		return true
+	})
+	d.Nilf(err, "RangeByDate failed: %v", err)
+	d.Lenf(found, 1, "expected the uploaded photo to be listed, got %v", found)
+}
