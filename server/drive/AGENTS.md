@@ -1,7 +1,7 @@
 # DRIVE BACKENDS
 
 ## OVERVIEW
-Three `StorageDrive` implementations (SMB, WebDAV, NFS) that read/write photos to remote filesystems. Each drive is constructed directly in `server/api/` handlers and injected via `im.SetDrive(d)`. Only one drive is active at a time.
+Four `StorageDrive` implementations (SMB, WebDAV, NFS, S3) that read/write photos to remote filesystems. Each drive is constructed directly in `server/api/` handlers and injected via `im.SetDrive(d)`. Only one drive is active at a time.
 
 ## STRUCTURE
 ```
@@ -9,6 +9,8 @@ server/drive/
 ├── smb/smb.go           # go-smb2, NTLM auth, lazy connect with 5min TTL
 ├── webdav/webdav.go     # gowebdav fork, Basic Auth, InsecureSkipVerify
 ├── nfs/nfs.go           # go-nfs-client fork, AUTH_UNIX root, 2min idle reconnect
+├── s3/s3.go             # minio-go, object store; Config struct, Check() before activation, taken-at metadata
+├── s3/endpoint.go       # ParseEndpoint (scheme overrides TLS flag), objectKey helpers
 
 └── drive_test.go        # testify/suite, Docker-based integration tests
 ```
@@ -17,6 +19,7 @@ server/drive/
 
 | Task | Location | Notes |
 |------|----------|-------|
+| Debug S3 setup/listing | `s3/s3.go` `Check()`, `Range()` | Setup validates bucket + credentials before `SetDrive`; `Range` lists one prefix level (no cache). Tests need `docker compose -f test/docker-compose.yml up -d s3` |
 | Add a new storage backend | Create `server/drive/<name>/<name>.go` + constructor in `server/api/<name>.go` | Must implement `StorageDrive` (see `server/imgmanager/interface.go`) |
 | Debug SMB connection issues | `smb/smb.go:56 checkConn()` | 5min TTL, `downloadLock` serializes all downloads |
 | Debug WebDAV auth/protocol | `webdav/webdav.go:34 SetTransport()` | TLS verification disabled, `mkdirLock` serializes MkdirAll |

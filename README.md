@@ -19,8 +19,9 @@ What this fork adds:
 
 - **S3-compatible storage as a sync option** (AWS S3, MinIO, Cloudflare R2, Backblaze B2, Ceph, etc.)
 
-S3 support is **not implemented yet** — upstream Pho has no S3 backend, and nothing in this repo
-provides one today. See the [roadmap](#roadmap) for the plan.
+S3 support is implemented (upstream Pho has no S3 backend) and has been tested against a local
+S3-compatible server only. It has **not yet been verified against AWS S3 or Backblaze B2**. See the
+[roadmap](#roadmap) for what is still planned.
 
 ## Features
 
@@ -41,9 +42,39 @@ Inherited from Pho:
 | Samba (SMB) | Supported (from Pho) |
 | WebDAV | Supported (from Pho) |
 | NFS | Supported (from Pho) |
-| S3-compatible | Planned (this fork) |
+| S3-compatible | Supported (this fork), see [S3 setup](#s3-setup) |
 
 Android is the primary target. The iOS, Linux, macOS and Windows code is inherited from Pho but is not maintained or tested in this fork.
+
+## S3 setup
+
+Whaleshot syncs to any S3-compatible service (AWS S3, Backblaze B2, MinIO, Cloudflare R2, ...).
+
+1. **Create the bucket yourself first, and keep it empty.** Whaleshot never creates buckets, and it
+   expects a bucket it owns: it does not read buckets already filled by other apps or by the Pro
+   edition of Pho.
+2. Create an access key with read, write, list and delete permission on that bucket.
+3. In the app, open the storage settings, choose **S3** and fill in:
+
+| Field | Notes |
+|---|---|
+| Endpoint | Host and optional port, for example `s3.us-west-004.backblazeb2.com` or `s3.amazonaws.com`. A leading `https://` or `http://` is accepted and overrides the HTTPS switch. |
+| Region | Optional for most providers. |
+| Bucket | The bucket you created. It must already exist. |
+| Access key / Secret key | The key pair from step 2. |
+| Root prefix | Optional folder-like prefix to keep Whaleshot's files under. |
+| Use HTTPS (TLS) | On by default. Certificates are always verified; turn it off only for a plain-HTTP server such as a local test instance. Self-signed HTTPS certificates are not supported. |
+| Path-style addressing | Off for AWS S3, on for Backblaze B2, MinIO and most other services. It follows the endpoint until you change it yourself. |
+
+4. Press **Test storage** and then **Save**. Setup fails with a clear message if the credentials are wrong
+   or the bucket does not exist.
+
+Objects use the same layout as the other backends (`YYYY/MM/DD/<file>` plus a `.thumbnail/` tree).
+Each upload also records the photo's original time as object metadata (`taken-at`), which stays
+available if you download the files outside the app.
+
+> **Credentials are stored unencrypted** in the app's preferences for now (like the SMB and WebDAV
+> passwords). Encrypting them is on the [roadmap](#roadmap).
 
 ## Screenshots
 
@@ -57,13 +88,14 @@ Android is the primary target. The iOS, Linux, macOS and Windows code is inherit
 ## Roadmap
 
 - [x] SMB, WebDAV and NFS sync (inherited from Pho)
-- [ ] S3-compatible drive backend in the Go server (`server/drive/s3`)
-- [ ] S3 settings in the app (endpoint, region, bucket, credentials, path-style addressing)
+- [x] S3-compatible drive backend in the Go server (`server/drive/s3`)
+- [x] S3 settings in the app (endpoint, region, bucket, credentials, path-style addressing)
   - The bucket must be created by you beforehand and should be empty; Whaleshot does not create buckets
   - S3 credentials are stored unencrypted in the app's preferences at first
 - [ ] Encrypt stored credentials (S3 and other drives) in the app
-- [ ] Tests against a containerized S3 server (e.g. MinIO) in `test/docker-compose.yml`
-- [ ] Keep the existing date-based object layout and `.thumbnail/` prefix on S3
+- [x] Tests against a containerized S3-compatible server (RustFS) in `test/docker-compose.yml`
+- [x] Keep the existing date-based object layout and `.thumbnail/` prefix on S3
+- [ ] Verify against AWS S3 and Backblaze B2
 - [ ] Prefix-based listing for S3 (`LIST` with prefix/delimiter) with result caching, instead of re-walking the whole date tree on every call
 - [ ] Disk cache for cloud thumbnails, to cut repeat S3 requests while scrolling
 - [ ] Generate thumbnails on demand for photos that were added to the bucket by other tools
@@ -98,6 +130,8 @@ make ipa           # iOS IPA
 
 # 4. Run tests (Docker is required for the SMB/WebDAV/NFS test containers)
 make test
+# S3 tests only: docker compose -f test/docker-compose.yml up -d s3, then
+# go test ./server/drive/ -run 'TestDriveSuite/(TestAllDrives/S3|TestS3_)'
 ```
 
 > Note: `flutter run` does not build `android/app/libs/server.aar` automatically. Run
