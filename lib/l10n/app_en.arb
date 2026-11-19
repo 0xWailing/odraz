@@ -153,5 +153,11 @@
 "s3RootPrefixHint": "Optional, eg: photos",
 "s3UseSsl": "Use HTTPS (TLS)",
 "s3PathStyle": "Path-style addressing",
-"s3PathStyleHint": "Turn off for AWS S3; keep on for Backblaze B2, MinIO and most others."
+"s3PathStyleHint": "Turn off for AWS S3; keep on for Backblaze B2, MinIO and most others.",
+"themeTitle": "Theme",
+"themeSystem": "System",
+"themeLight": "Light",
+"themeDark": "Dark",
+"themeOled": "Pure black (OLED)",
+"themeOledDesc": "Saves battery on OLED screens. Applies in dark mode."
 }

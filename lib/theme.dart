@@ -476,3 +476,42 @@ BadgeThemeData buildBadgeTheme(ColorScheme cs) {
     textColor: cs.onError,
   );
 }
+
+ThemeData buildThemeData({
+  required ColorScheme colorScheme,
+  required Brightness brightness,
+}) {
+  return ThemeData(
+    colorScheme: colorScheme,
+    useMaterial3: true,
+    textTheme: textTheme,
+    navigationBarTheme: brightness == Brightness.light
+        ? buildNavigationBarThemeLight(colorScheme)
+        : buildNavigationBarThemeDark(colorScheme),
+    iconTheme: brightness == Brightness.light ? iconThemeLight : iconThemeDark,
+    floatingActionButtonTheme: brightness == Brightness.light
+        ? floatingActionButtonThemeLight
+        : const FloatingActionButtonThemeData(),
+    appBarTheme: buildAppBarTheme(colorScheme),
+    cardTheme: buildCardTheme(colorScheme),
+    listTileTheme: buildListTileTheme(colorScheme),
+    chipTheme: buildChipTheme(colorScheme),
+    dialogTheme: buildDialogTheme(colorScheme),
+    snackBarTheme: buildSnackBarTheme(colorScheme),
+    dividerTheme: buildDividerTheme(colorScheme),
+    switchTheme: buildSwitchTheme(colorScheme),
+    inputDecorationTheme: buildInputDecorationTheme(colorScheme),
+    navigationRailTheme: buildNavigationRailTheme(colorScheme),
+    bottomSheetTheme: buildBottomSheetTheme(colorScheme),
+    progressIndicatorTheme: buildProgressIndicatorTheme(colorScheme),
+    sliderTheme: buildSliderTheme(colorScheme),
+    filledButtonTheme: buildFilledButtonTheme(colorScheme),
+    textButtonTheme: buildTextButtonTheme(colorScheme),
+    outlinedButtonTheme: buildOutlinedButtonTheme(colorScheme),
+    segmentedButtonTheme: buildSegmentedButtonTheme(colorScheme),
+    dropdownMenuTheme: buildDropdownMenuTheme(colorScheme),
+    popupMenuTheme: buildPopupMenuTheme(colorScheme),
+    tooltipTheme: buildTooltipTheme(colorScheme),
+    badgeTheme: buildBadgeTheme(colorScheme),
+  );
+}

@@ -494,4 +494,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get s3PathStyleHint =>
       'Turn off for AWS S3; keep on for Backblaze B2, MinIO and most others.';
+
+  @override
+  String get themeTitle => 'Theme';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get themeOled => 'Pure black (OLED)';
+
+  @override
+  String get themeOledDesc =>
+      'Saves battery on OLED screens. Applies in dark mode.';
 }

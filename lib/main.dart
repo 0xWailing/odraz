@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:img_syncer/desktop/home_page.dart';
+import 'package:img_syncer/theme_settings.dart';
 import 'package:img_syncer/event_bus.dart';
 import 'package:img_syncer/global.dart';
 import 'package:img_syncer/util.dart';
@@ -27,9 +28,8 @@ import 'background_sync_entrypoint.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // 清除 adaptive_theme 持久化的旧暗色模式，强制浅色
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.remove('adaptive_theme');
+  // The saved theme mode (System / Light / Dark); nothing saved means System.
+  final initialThemeMode = await AdaptiveTheme.getThemeMode();
   Global.init().then((e) => runApp(
         MultiProvider(
           providers: [
@@ -37,7 +37,7 @@ void main() async {
             ChangeNotifierProvider(create: (context) => assetModel),
             ChangeNotifierProvider(create: (context) => stateModel),
           ],
-          child: const MyApp(),
+          child: MyApp(initialThemeMode: initialThemeMode),
         ),
       ));
 }
@@ -88,7 +88,10 @@ class _AppEntryPointState extends State<_AppEntryPoint> {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key, this.initialThemeMode}) : super(key: key);
+
+  /// The theme mode saved from the last run, if any.
+  final AdaptiveThemeMode? initialThemeMode;
   static const String _title = 'odraz';
   // This widget is the root of your application.
 
@@ -104,21 +107,16 @@ class MyApp extends StatelessWidget {
         // Brand colors only: wallpaper (Material You) colors are not used.
         final lightColorScheme = resolveColorScheme(
             userSeed: seedColor, brightness: Brightness.light);
-        final darkColorScheme = resolveColorScheme(
-            userSeed: seedColor, brightness: Brightness.dark);
 
         var lightTheme = buildThemeData(
           colorScheme: lightColorScheme,
           brightness: Brightness.light,
         );
-        var darkTheme = buildThemeData(
-          colorScheme: darkColorScheme,
-          brightness: Brightness.dark,
-        );
+        var darkTheme = buildDarkThemeData(userSeed: seedColor, oled: oledDark);
         return AdaptiveTheme(
             light: lightTheme,
             dark: darkTheme,
-            initial: AdaptiveThemeMode.light,
+            initial: resolveInitialThemeMode(initialThemeMode),
             builder: (theme, darkTheme) {
               return MaterialApp(
                 title: _title,
@@ -126,7 +124,6 @@ class MyApp extends StatelessWidget {
                 home: const _AppEntryPoint(),
                 theme: theme,
                 darkTheme: darkTheme,
-                themeMode: ThemeMode.light,
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
                 // English only for now. The Chinese translations (app_zh.arb) are kept
                 // in the repo but disabled here; re-add Locale('zh') to enable them.
@@ -159,7 +156,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           syncedIds == '[]' &&
           lastRefresh != null &&
           lastRefresh != 0) {
-        SnackBarManager.showSnackBar("Previous sync state was lost. Connect to WiFi and keep the app in the foreground to re-verify sync status.");
+        SnackBarManager.showSnackBar(
+            "Previous sync state was lost. Connect to WiFi and keep the app in the foreground to re-verify sync status.");
       }
     });
     SharedPreferences.getInstance().then((prefs) async {
@@ -168,12 +166,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         seedColor = Color(seedColorValue);
         AdaptiveTheme.of(context).setTheme(
           light: buildThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: seedColor!,
-              brightness: Brightness.light,
-            ),
+            colorScheme: resolveColorScheme(
+                userSeed: seedColor, brightness: Brightness.light),
             brightness: Brightness.light,
           ),
+          dark: buildDarkThemeData(userSeed: seedColor, oled: oledDark),
         );
       }
     });
@@ -287,43 +284,4 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           )
         : const DesktopHomePage();
   }
-}
-
-ThemeData buildThemeData({
-  required ColorScheme colorScheme,
-  required Brightness brightness,
-}) {
-  return ThemeData(
-    colorScheme: colorScheme,
-    useMaterial3: true,
-    textTheme: textTheme,
-    navigationBarTheme: brightness == Brightness.light
-        ? buildNavigationBarThemeLight(colorScheme)
-        : buildNavigationBarThemeDark(colorScheme),
-    iconTheme: brightness == Brightness.light ? iconThemeLight : iconThemeDark,
-    floatingActionButtonTheme: brightness == Brightness.light
-        ? floatingActionButtonThemeLight
-        : const FloatingActionButtonThemeData(),
-    appBarTheme: buildAppBarTheme(colorScheme),
-    cardTheme: buildCardTheme(colorScheme),
-    listTileTheme: buildListTileTheme(colorScheme),
-    chipTheme: buildChipTheme(colorScheme),
-    dialogTheme: buildDialogTheme(colorScheme),
-    snackBarTheme: buildSnackBarTheme(colorScheme),
-    dividerTheme: buildDividerTheme(colorScheme),
-    switchTheme: buildSwitchTheme(colorScheme),
-    inputDecorationTheme: buildInputDecorationTheme(colorScheme),
-    navigationRailTheme: buildNavigationRailTheme(colorScheme),
-    bottomSheetTheme: buildBottomSheetTheme(colorScheme),
-    progressIndicatorTheme: buildProgressIndicatorTheme(colorScheme),
-    sliderTheme: buildSliderTheme(colorScheme),
-    filledButtonTheme: buildFilledButtonTheme(colorScheme),
-    textButtonTheme: buildTextButtonTheme(colorScheme),
-    outlinedButtonTheme: buildOutlinedButtonTheme(colorScheme),
-    segmentedButtonTheme: buildSegmentedButtonTheme(colorScheme),
-    dropdownMenuTheme: buildDropdownMenuTheme(colorScheme),
-    popupMenuTheme: buildPopupMenuTheme(colorScheme),
-    tooltipTheme: buildTooltipTheme(colorScheme),
-    badgeTheme: buildBadgeTheme(colorScheme),
-  );
 }

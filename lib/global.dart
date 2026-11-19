@@ -23,6 +23,9 @@ bool isDebug = false;
 
 Color? seedColor;
 
+/// Pure-black dark mode (OLED); saved as `oled_dark`.
+bool oledDark = false;
+
 class Global {
   static Future init() async {
     assert(() {
@@ -101,6 +104,7 @@ class Global {
       if (seedColorValue != null) {
         seedColor = Color(seedColorValue);
       }
+      oledDark = prefs.getBool("oled_dark") ?? false;
       final galleryColumCount = prefs.getInt("galleryColumCount");
       if (galleryColumCount != null) {
         settingModel.setGalleryColumCount(galleryColumCount);
