@@ -162,9 +162,9 @@ List<Color> seedThemeColors = [
   const Color(0xFF9ACD32), // 黄绿色
 ];
 
-/// The odraz brand color scheme. Starts from a Material 3 scheme seeded with the
-/// brand violet and pins the main roles to the logo palette.
-ColorScheme buildBrandColorScheme(Brightness brightness) {
+/// The odraz brand color scheme: warm paper / ink neutrals (after whaling.xyz)
+/// with the logo accents. [oled] pins pure-black surfaces in dark mode.
+ColorScheme buildBrandColorScheme(Brightness brightness, {bool oled = false}) {
   final base = ColorScheme.fromSeed(
     seedColor: AppColors.brandViolet,
     brightness: brightness,
@@ -177,32 +177,70 @@ ColorScheme buildBrandColorScheme(Brightness brightness) {
       onSecondary: AppColors.brandInk,
       tertiary: AppColors.brandCyan,
       onTertiary: AppColors.brandInk,
-      surface: AppColors.brandSnow,
-      onSurface: AppColors.brandInk,
+      surface: AppColors.paperSurface,
+      surfaceDim: AppColors.paperDim,
+      surfaceBright: AppColors.paperSurface,
+      surfaceContainerLowest: AppColors.paperLowest,
+      surfaceContainerLow: AppColors.paperLow,
+      surfaceContainer: AppColors.paperContainer,
+      surfaceContainerHigh: AppColors.paperHigh,
+      surfaceContainerHighest: AppColors.paperHighest,
+      onSurface: const Color(0xFF0A0A0B),
+      onSurfaceVariant: AppColors.paperMutedText,
+      outline: AppColors.paperOutline,
+      outlineVariant: AppColors.paperHairline,
     );
   }
-  return base.copyWith(
-    primary: AppColors.brandCyan,
-    onPrimary: AppColors.brandNight,
-    secondary: AppColors.brandViolet,
-    onSecondary: Colors.white,
-    tertiary: AppColors.brandBlue,
-    onTertiary: AppColors.brandInk,
-    surface: AppColors.brandNight,
-    onSurface: AppColors.brandSnow,
+  final dark = base.copyWith(
+    primary: AppColors.inkPrimary,
+    onPrimary: AppColors.inkOnAccent,
+    secondary: AppColors.brandBlue,
+    onSecondary: AppColors.inkOnAccent,
+    tertiary: AppColors.brandCyan,
+    onTertiary: AppColors.inkOnAccent,
+    surface: AppColors.inkSurface,
+    surfaceDim: AppColors.inkSurface,
+    surfaceBright: AppColors.inkHighest,
+    surfaceContainerLowest: AppColors.inkSurface,
+    surfaceContainerLow: AppColors.inkLow,
+    surfaceContainer: AppColors.inkContainer,
+    surfaceContainerHigh: AppColors.inkHigh,
+    surfaceContainerHighest: AppColors.inkHighest,
+    onSurface: AppColors.inkText,
+    onSurfaceVariant: AppColors.inkMutedText,
+    outline: AppColors.inkOutline,
+    outlineVariant: AppColors.inkHairline,
   );
+  return oled ? _withOledSurfaces(dark) : dark;
 }
 
+/// Replaces the dark surfaces with pure black and slightly lifted containers.
+ColorScheme _withOledSurfaces(ColorScheme cs) => cs.copyWith(
+      surface: AppColors.oledSurface,
+      surfaceDim: AppColors.oledSurface,
+      surfaceBright: AppColors.oledHighest,
+      surfaceContainerLowest: AppColors.oledSurface,
+      surfaceContainerLow: AppColors.oledLow,
+      surfaceContainer: AppColors.oledContainer,
+      surfaceContainerHigh: AppColors.oledHigh,
+      surfaceContainerHighest: AppColors.oledHighest,
+      outlineVariant: AppColors.oledHairline,
+    );
+
 /// The scheme the app uses: a color the user saved wins, otherwise the brand
-/// scheme. Wallpaper (Material You) colors are deliberately not used.
+/// scheme. [oled] applies to dark mode only. Wallpaper (Material You) colors
+/// are deliberately not used.
 ColorScheme resolveColorScheme({
   Color? userSeed,
   required Brightness brightness,
+  bool oled = false,
 }) {
   if (userSeed != null) {
-    return ColorScheme.fromSeed(seedColor: userSeed, brightness: brightness);
+    final cs =
+        ColorScheme.fromSeed(seedColor: userSeed, brightness: brightness);
+    return (oled && brightness == Brightness.dark) ? _withOledSurfaces(cs) : cs;
   }
-  return buildBrandColorScheme(brightness);
+  return buildBrandColorScheme(brightness, oled: oled);
 }
 
 AppBarTheme buildAppBarTheme(ColorScheme cs) {

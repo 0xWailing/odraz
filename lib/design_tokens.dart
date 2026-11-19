@@ -24,6 +24,39 @@ class AppColors {
   static const Color brandSnow = Color(0xFFF9FAFB);
   static const Color brandNight = Color(0xFF180448);
 
+  /// Warm neutrals (after whaling.xyz): light "paper" surfaces.
+  static const Color paperSurface = Color(0xFFFAF8F2);
+  static const Color paperLowest = Color(0xFFFFFFFF);
+  static const Color paperLow = Color(0xFFFDFCF7);
+  static const Color paperContainer = Color(0xFFF7F4ED);
+  static const Color paperHigh = Color(0xFFF2EEE4);
+  static const Color paperHighest = Color(0xFFEDE8DC);
+  static const Color paperDim = Color(0xFFE9E4D8);
+  static const Color paperMutedText = Color(0xFF6B6457);
+  static const Color paperOutline = Color(0xFF8A8272);
+  static const Color paperHairline = Color(0xFFE8E3D8);
+
+  /// Warm neutrals: dark "ink" surfaces.
+  static const Color inkSurface = Color(0xFF0C0B09);
+  static const Color inkLow = Color(0xFF161512);
+  static const Color inkContainer = Color(0xFF1C1B17);
+  static const Color inkHigh = Color(0xFF23221D);
+  static const Color inkHighest = Color(0xFF2B2A24);
+  static const Color inkText = Color(0xFFEDEDEE);
+  static const Color inkMutedText = Color(0xFFA0A0A6);
+  static const Color inkOutline = Color(0xFF6E6D68);
+  static const Color inkHairline = Color(0xFF2A2924);
+  static const Color inkPrimary = Color(0xFFA78BFA);
+  static const Color inkOnAccent = Color(0xFF0B0817);
+
+  /// OLED: pure black with slightly lifted containers.
+  static const Color oledSurface = Color(0xFF000000);
+  static const Color oledLow = Color(0xFF0A0A0A);
+  static const Color oledContainer = Color(0xFF121212);
+  static const Color oledHigh = Color(0xFF1A1A1A);
+  static const Color oledHighest = Color(0xFF222222);
+  static const Color oledHairline = Color(0xFF242424);
+
   /// Pro 功能的皇冠图标金色 (#EACD76)
   static const Color proCrownColor = Color.fromARGB(255, 234, 205, 118);
 
