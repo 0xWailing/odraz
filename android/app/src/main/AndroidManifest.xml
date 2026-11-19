@@ -10,7 +10,8 @@
    <application
         android:label="odraz"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true">
         <activity android:name="io.flutter.plugins.androidintent.IntentSenderActivity" />
