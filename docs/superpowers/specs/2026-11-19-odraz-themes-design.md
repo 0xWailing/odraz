@@ -46,3 +46,9 @@ user choose the theme in settings (default: follow the phone), and offer a pure-
 - Version 1.1.0+21; tag `odraz-1.1.0` (upstream already owns `v1.1.0`); release title "odraz 1.1".
 - Dark screens can't be eyeballed on a device here; hard-coded `Colors.white/black` in gallery/viewer
   stay as they are and are reported as known risk.
+
+## Update (owner decision, after 1.1)
+OLED is a **fourth choice in the Theme picker** (System / Light / Dark / OLED), not a switch on top of
+Dark. OLED = dark mode with pure-black surfaces. System follows the phone and uses the regular dark
+theme. The `oled_dark` preference stays, but only counts while dark is the chosen mode: a leftover
+flag from 1.1 (switch on while on System) is dropped at startup.

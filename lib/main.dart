@@ -30,16 +30,25 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // The saved theme mode (System / Light / Dark); nothing saved means System.
   final initialThemeMode = await AdaptiveTheme.getThemeMode();
-  Global.init().then((e) => runApp(
-        MultiProvider(
-          providers: [
-            ChangeNotifierProvider(create: (context) => settingModel),
-            ChangeNotifierProvider(create: (context) => assetModel),
-            ChangeNotifierProvider(create: (context) => stateModel),
-          ],
-          child: MyApp(initialThemeMode: initialThemeMode),
-        ),
-      ));
+  Global.init().then((e) async {
+    // 1.1 offered OLED as a switch on top of System; keep it only for Dark.
+    final oled =
+        resolveOledFlag(savedOled: oledDark, savedMode: initialThemeMode);
+    if (oled != oledDark) {
+      oledDark = oled;
+      await (await SharedPreferences.getInstance()).setBool('oled_dark', oled);
+    }
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => settingModel),
+          ChangeNotifierProvider(create: (context) => assetModel),
+          ChangeNotifierProvider(create: (context) => stateModel),
+        ],
+        child: MyApp(initialThemeMode: initialThemeMode),
+      ),
+    );
+  });
 }
 
 class _AppEntryPoint extends StatefulWidget {

@@ -20,20 +20,55 @@ ThemeData buildDarkThemeData({Color? userSeed, required bool oled}) =>
       brightness: Brightness.dark,
     );
 
-/// Saves the OLED choice and rebuilds the dark theme right away.
-Future<void> applyOledDark(BuildContext context, bool value) async {
-  oledDark = value;
+/// What the user picks in Settings. OLED is dark mode with pure-black surfaces.
+enum ThemeChoice { system, light, dark, oled }
+
+ThemeChoice themeChoiceOf(AdaptiveThemeMode mode, bool oled) {
+  switch (mode) {
+    case AdaptiveThemeMode.light:
+      return ThemeChoice.light;
+    case AdaptiveThemeMode.dark:
+      return oled ? ThemeChoice.oled : ThemeChoice.dark;
+    case AdaptiveThemeMode.system:
+      return ThemeChoice.system;
+  }
+}
+
+/// OLED only counts when dark is the chosen mode. Version 1.1 had OLED as a
+/// switch on top of System; that leftover flag is dropped at startup.
+bool resolveOledFlag({
+  required bool savedOled,
+  required AdaptiveThemeMode? savedMode,
+}) =>
+    savedOled && savedMode == AdaptiveThemeMode.dark;
+
+/// Applies a choice: sets the mode, saves the OLED flag and rebuilds the dark
+/// theme right away.
+Future<void> applyThemeChoice(BuildContext context, ThemeChoice choice) async {
+  oledDark = choice == ThemeChoice.oled;
   final prefs = await SharedPreferences.getInstance();
-  await prefs.setBool('oled_dark', value);
+  await prefs.setBool('oled_dark', oledDark);
   if (!context.mounted) return;
   final manager = AdaptiveTheme.of(context);
   manager.setTheme(
     light: manager.lightTheme,
-    dark: buildDarkThemeData(userSeed: seedColor, oled: value),
+    dark: buildDarkThemeData(userSeed: seedColor, oled: oledDark),
   );
+  switch (choice) {
+    case ThemeChoice.system:
+      manager.setSystem();
+      break;
+    case ThemeChoice.light:
+      manager.setLight();
+      break;
+    case ThemeChoice.dark:
+    case ThemeChoice.oled:
+      manager.setDark();
+      break;
+  }
 }
 
-/// The "Theme" row (System / Light / Dark) and the pure-black switch.
+/// The "Theme" row: System / Light / Dark / OLED.
 class ThemeSettingsTiles extends StatefulWidget {
   const ThemeSettingsTiles({Key? key}) : super(key: key);
 
@@ -42,29 +77,33 @@ class ThemeSettingsTiles extends StatefulWidget {
 }
 
 class _ThemeSettingsTilesState extends State<ThemeSettingsTiles> {
-  String _label(AdaptiveThemeMode mode) {
-    switch (mode) {
-      case AdaptiveThemeMode.light:
-        return l10n.themeLight;
-      case AdaptiveThemeMode.dark:
-        return l10n.themeDark;
-      case AdaptiveThemeMode.system:
+  String _label(ThemeChoice choice) {
+    switch (choice) {
+      case ThemeChoice.system:
         return l10n.themeSystem;
+      case ThemeChoice.light:
+        return l10n.themeLight;
+      case ThemeChoice.dark:
+        return l10n.themeDark;
+      case ThemeChoice.oled:
+        return l10n.themeOled;
     }
   }
 
-  void _pickMode() {
-    final manager = AdaptiveTheme.of(context);
+  ThemeChoice _current() =>
+      themeChoiceOf(AdaptiveTheme.of(context).mode, oledDark);
+
+  void _pick() {
     showDialog<void>(
       context: context,
       builder: (dialogContext) => Dialog(
-        child: RadioGroup<AdaptiveThemeMode>(
-          groupValue: manager.mode,
-          onChanged: (mode) {
-            if (mode == null) return;
-            manager.setThemeMode(mode);
+        child: RadioGroup<ThemeChoice>(
+          groupValue: _current(),
+          onChanged: (choice) async {
+            if (choice == null) return;
             Navigator.pop(dialogContext);
-            setState(() {});
+            await applyThemeChoice(context, choice);
+            if (mounted) setState(() {});
           },
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -75,10 +114,13 @@ class _ThemeSettingsTilesState extends State<ThemeSettingsTiles> {
                 child: Text(l10n.themeTitle,
                     style: Theme.of(dialogContext).textTheme.titleLarge),
               ),
-              for (final mode in AdaptiveThemeMode.values)
-                RadioListTile<AdaptiveThemeMode>(
-                  value: mode,
-                  title: Text(_label(mode)),
+              for (final choice in ThemeChoice.values)
+                RadioListTile<ThemeChoice>(
+                  value: choice,
+                  title: Text(_label(choice)),
+                  subtitle: choice == ThemeChoice.oled
+                      ? Text(l10n.themeOledDesc)
+                      : null,
                 ),
               const SizedBox(height: 10),
             ],
@@ -92,35 +134,16 @@ class _ThemeSettingsTilesState extends State<ThemeSettingsTiles> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.paddingSmall),
-          child: ListTile(
-            leading: Icon(Icons.brightness_6_outlined,
-                size: 28, color: cs.onSurfaceVariant),
-            title: Text(l10n.themeTitle, style: tt.titleLarge),
-            subtitle: Text(_label(AdaptiveTheme.of(context).mode),
-                style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
-            onTap: _pickMode,
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.paddingSmall),
-          child: SwitchListTile(
-            secondary:
-                Icon(Icons.contrast, size: 28, color: cs.onSurfaceVariant),
-            title: Text(l10n.themeOled, style: tt.titleLarge),
-            subtitle: Text(l10n.themeOledDesc,
-                style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
-            value: oledDark,
-            onChanged: (value) async {
-              await applyOledDark(context, value);
-              if (mounted) setState(() {});
-            },
-          ),
-        ),
-      ],
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.paddingSmall),
+      child: ListTile(
+        leading: Icon(Icons.brightness_6_outlined,
+            size: 28, color: cs.onSurfaceVariant),
+        title: Text(l10n.themeTitle, style: tt.titleLarge),
+        subtitle: Text(_label(_current()),
+            style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
+        onTap: _pick,
+      ),
     );
   }
 }
