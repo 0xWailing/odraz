@@ -10,7 +10,7 @@ from PIL import Image
 
 FG = Path("assets/icon/odraz_icon_foreground.png")
 LEGACY = Path("assets/icon/odraz_icon_legacy.png")
-SNOW = (0xF9, 0xFA, 0xFB)
+SNOW = (0xFA, 0xF8, 0xF2)
 NIGHT = (0x18, 0x04, 0x48)
 errors = []
 
@@ -59,7 +59,7 @@ check(far <= 335, f"foreground pixel {far:.0f}px from center, must stay within 3
 
 leg = Image.open(LEGACY).convert("RGB")
 check(leg.size == (1024, 1024), f"{LEGACY} must be 1024x1024, got {leg.size}")
-check(all(abs(a - b) <= 2 for a, b in zip(leg.getpixel((0, 0)), SNOW)), "legacy corner must be #F9FAFB")
+check(all(abs(a - b) <= 2 for a, b in zip(leg.getpixel((0, 0)), SNOW)), "legacy corner must be #FAF8F2")
 diff = leg.point(lambda v: v).convert("RGB")
 mask = Image.new("L", leg.size, 0)
 lp, mp = leg.load(), mask.load()

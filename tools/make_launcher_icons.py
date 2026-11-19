@@ -6,7 +6,7 @@ Outputs (1024x1024):
   assets/icon/odraz_icon_foreground.png  adaptive-icon foreground: transparent
                                          outside the hexagon, hexagon height 60.5%
   assets/icon/odraz_icon_legacy.png      pre-Android-8 icon: hexagon height 92%
-                                         on the #F9FAFB brand background
+                                         on the #FAF8F2 cream background
 """
 import math
 from collections import deque
@@ -15,9 +15,10 @@ from pathlib import Path
 from PIL import Image
 
 SRC = Path("assets/icon/odraz_logo.png")
-BG = (0xF9, 0xFA, 0xFB)
+LOGO_BG = (0xF9, 0xFA, 0xFB)  # the logo PNG's own background, cut out of the hexagon
+ICON_BG = (0xFA, 0xF8, 0xF2)  # odraz cream: the icon's background layer
 HEX = (26, 4, 80)  # hexagon edge color (deep violet)
-HEX_BG_DIST = math.dist(HEX, BG)
+HEX_BG_DIST = math.dist(HEX, LOGO_BG)
 SIZE = 1024
 
 
@@ -26,7 +27,7 @@ def knock_out_background(img: Image.Image) -> Image.Image:
     then un-mix the anti-aliased edge pixels into partial alpha."""
     w, h = img.size
     px = img.load()
-    dist = [[math.dist(px[x, y], BG) for x in range(w)] for y in range(h)]
+    dist = [[math.dist(px[x, y], LOGO_BG) for x in range(w)] for y in range(h)]
     ext = [[False] * w for _ in range(h)]
     dq = deque()
     for c in [(0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)]:
@@ -85,7 +86,7 @@ def main() -> None:
         return canvas
 
     placed(round(0.605 * SIZE), (0, 0, 0, 0)).save("assets/icon/odraz_icon_foreground.png")
-    placed(round(0.92 * SIZE), (*BG, 255)).convert("RGB").save("assets/icon/odraz_icon_legacy.png")
+    placed(round(0.92 * SIZE), (*ICON_BG, 255)).convert("RGB").save("assets/icon/odraz_icon_legacy.png")
     print("wrote assets/icon/odraz_icon_foreground.png and odraz_icon_legacy.png")
 
 
