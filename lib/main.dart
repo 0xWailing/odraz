@@ -101,26 +101,11 @@ class MyApp extends StatelessWidget {
     ));
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
-        late ColorScheme lightColorScheme;
-        late ColorScheme darkColorScheme;
-        if (lightDynamic != null) {
-          lightColorScheme = lightDynamic.harmonized();
-        } else {
-          print("lightDynamic is null");
-          lightColorScheme = ColorScheme.fromSeed(
-            seedColor: seedColor ?? seedThemeColors[0],
-            brightness: Brightness.light,
-          );
-        }
-        if (darkDynamic != null) {
-          darkColorScheme = darkDynamic.harmonized();
-        } else {
-          print("darkDynamic is null");
-          darkColorScheme = ColorScheme.fromSeed(
-            seedColor: seedColor ?? seedThemeColors[0],
-            brightness: Brightness.dark,
-          );
-        }
+        // Brand colors only: wallpaper (Material You) colors are not used.
+        final lightColorScheme = resolveColorScheme(
+            userSeed: seedColor, brightness: Brightness.light);
+        final darkColorScheme = resolveColorScheme(
+            userSeed: seedColor, brightness: Brightness.dark);
 
         var lightTheme = buildThemeData(
           colorScheme: lightColorScheme,

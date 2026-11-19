@@ -16,6 +16,14 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
+  /// odraz brand palette, sampled from the logo.
+  static const Color brandViolet = Color(0xFF6B4FD8);
+  static const Color brandBlue = Color(0xFF4D96FF);
+  static const Color brandCyan = Color(0xFF4DDCFF);
+  static const Color brandInk = Color(0xFF111827);
+  static const Color brandSnow = Color(0xFFF9FAFB);
+  static const Color brandNight = Color(0xFF180448);
+
   /// Pro 功能的皇冠图标金色 (#EACD76)
   static const Color proCrownColor = Color.fromARGB(255, 234, 205, 118);
 

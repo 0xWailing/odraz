@@ -139,10 +139,8 @@ const iconThemeDark = IconThemeData();
 
 const floatingActionButtonThemeLight = FloatingActionButtonThemeData();
 
-
-
 List<Color> seedThemeColors = [
-  const Color(0xFF02FED1),
+  AppColors.brandViolet,
   const Color(0xFFFF2C55), // 玫瑰红
   const Color(0xFF007BFF), // 蓝色
   const Color(0xFFFF9500), // 橙色
@@ -163,6 +161,49 @@ List<Color> seedThemeColors = [
   const Color(0xFFDA70D6), // 兰花紫
   const Color(0xFF9ACD32), // 黄绿色
 ];
+
+/// The odraz brand color scheme. Starts from a Material 3 scheme seeded with the
+/// brand violet and pins the main roles to the logo palette.
+ColorScheme buildBrandColorScheme(Brightness brightness) {
+  final base = ColorScheme.fromSeed(
+    seedColor: AppColors.brandViolet,
+    brightness: brightness,
+  );
+  if (brightness == Brightness.light) {
+    return base.copyWith(
+      primary: AppColors.brandViolet,
+      onPrimary: Colors.white,
+      secondary: AppColors.brandBlue,
+      onSecondary: AppColors.brandInk,
+      tertiary: AppColors.brandCyan,
+      onTertiary: AppColors.brandInk,
+      surface: AppColors.brandSnow,
+      onSurface: AppColors.brandInk,
+    );
+  }
+  return base.copyWith(
+    primary: AppColors.brandCyan,
+    onPrimary: AppColors.brandNight,
+    secondary: AppColors.brandViolet,
+    onSecondary: Colors.white,
+    tertiary: AppColors.brandBlue,
+    onTertiary: AppColors.brandInk,
+    surface: AppColors.brandNight,
+    onSurface: AppColors.brandSnow,
+  );
+}
+
+/// The scheme the app uses: a color the user saved wins, otherwise the brand
+/// scheme. Wallpaper (Material You) colors are deliberately not used.
+ColorScheme resolveColorScheme({
+  Color? userSeed,
+  required Brightness brightness,
+}) {
+  if (userSeed != null) {
+    return ColorScheme.fromSeed(seedColor: userSeed, brightness: brightness);
+  }
+  return buildBrandColorScheme(brightness);
+}
 
 AppBarTheme buildAppBarTheme(ColorScheme cs) {
   return AppBarTheme(
