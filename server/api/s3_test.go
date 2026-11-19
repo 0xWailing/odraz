@@ -16,7 +16,7 @@ const (
 	apiS3Endpoint = "127.0.0.1:9000"
 	apiS3Access   = "testkey"
 	apiS3Secret   = "testsecret123"
-	apiS3Bucket   = "whaleshot-test"
+	apiS3Bucket   = "odraz-test"
 )
 
 // requireS3 skips the test when the S3 test server (test/docker-compose.yml)

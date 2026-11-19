@@ -252,7 +252,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get desktopStorageSettingDesc =>
-      'Set up network storage to browse the photos you\'ve backed up using Pho';
+      'Set up network storage to browse the photos you\'ve backed up using odraz';
 
   @override
   String get zoomIn => 'Zoom in';
@@ -322,7 +322,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refreshUnsynchronizedPhotos => 'Refresh unsynchronized photos';
 
   @override
-  String get onboardingWelcome => 'Welcome to Pho';
+  String get onboardingWelcome => 'Welcome to odraz';
 
   @override
   String get onboardingWelcomeDesc => 'Your serverless photo sync tool';
@@ -355,7 +355,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingPermissionDesc =>
-      'Pho needs access to your photo library to browse and sync photos';
+      'odraz needs access to your photo library to browse and sync photos';
 
   @override
   String get onboardingGrantPermission => 'Grant permission';
@@ -436,13 +436,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backgroundRefreshDisabledDesc =>
-      'Background sync cannot be triggered. Please go to Settings -> Pho to enable Background App Refresh, then go to Settings -> General -> Background App Refresh to confirm it\'s enabled globally';
+      'Background sync cannot be triggered. Please go to Settings -> odraz to enable Background App Refresh, then go to Settings -> General -> Background App Refresh to confirm it\'s enabled globally';
 
   @override
-  String get backgroundRefreshDisabledAction => 'Open Pho Settings';
+  String get backgroundRefreshDisabledAction => 'Open odraz Settings';
 
   @override
-  String get bgSyncSuccessNotificationTitle => 'Pho Background Sync';
+  String get bgSyncSuccessNotificationTitle => 'odraz Background Sync';
 
   @override
   String bgSyncSuccessNotificationBody(int count) {

@@ -17,7 +17,7 @@ const (
 	testEndpoint = "127.0.0.1:9000"
 	testAccess   = "testkey"
 	testSecret   = "testsecret123"
-	testBucket   = "whaleshot-test"
+	testBucket   = "odraz-test"
 )
 
 func newTestDrive(t *testing.T, root string) *S3 {

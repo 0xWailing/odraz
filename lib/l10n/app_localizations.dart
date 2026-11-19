@@ -575,7 +575,7 @@ abstract class AppLocalizations {
   /// No description provided for @desktopStorageSettingDesc.
   ///
   /// In en, this message translates to:
-  /// **'Set up network storage to browse the photos you\'ve backed up using Pho'**
+  /// **'Set up network storage to browse the photos you\'ve backed up using odraz'**
   String get desktopStorageSettingDesc;
 
   /// No description provided for @zoomIn.
@@ -707,7 +707,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingWelcome.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Pho'**
+  /// **'Welcome to odraz'**
   String get onboardingWelcome;
 
   /// No description provided for @onboardingWelcomeDesc.
@@ -767,7 +767,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingPermissionDesc.
   ///
   /// In en, this message translates to:
-  /// **'Pho needs access to your photo library to browse and sync photos'**
+  /// **'odraz needs access to your photo library to browse and sync photos'**
   String get onboardingPermissionDesc;
 
   /// No description provided for @onboardingGrantPermission.
@@ -911,19 +911,19 @@ abstract class AppLocalizations {
   /// No description provided for @backgroundRefreshDisabledDesc.
   ///
   /// In en, this message translates to:
-  /// **'Background sync cannot be triggered. Please go to Settings -> Pho to enable Background App Refresh, then go to Settings -> General -> Background App Refresh to confirm it\'s enabled globally'**
+  /// **'Background sync cannot be triggered. Please go to Settings -> odraz to enable Background App Refresh, then go to Settings -> General -> Background App Refresh to confirm it\'s enabled globally'**
   String get backgroundRefreshDisabledDesc;
 
   /// No description provided for @backgroundRefreshDisabledAction.
   ///
   /// In en, this message translates to:
-  /// **'Open Pho Settings'**
+  /// **'Open odraz Settings'**
   String get backgroundRefreshDisabledAction;
 
   /// No description provided for @bgSyncSuccessNotificationTitle.
   ///
   /// In en, this message translates to:
-  /// **'Pho Background Sync'**
+  /// **'odraz Background Sync'**
   String get bgSyncSuccessNotificationTitle;
 
   /// No description provided for @bgSyncSuccessNotificationBody.

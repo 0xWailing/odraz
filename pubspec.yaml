@@ -107,7 +107,7 @@ flutter:
   assets:
     - assets/images/broken.png
     - assets/images/gray.jpg
-    - assets/icon/pho_icon.png
+    - assets/icon/odraz_logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -129,4 +129,4 @@ flutter:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icon/pho_icon.png"
+  image_path: "assets/icon/odraz_logo.png"

@@ -58,14 +58,14 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
               children: [
                 Container(
                   child: Image.asset(
-                    'assets/icon/pho_icon.png',
+                    'assets/icon/odraz_logo.png',
                     width: 40,
                     height: 40,
                   ),
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  "Pho",
+                  "odraz",
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontFamily: "Sriracha-Regular",
                       ),

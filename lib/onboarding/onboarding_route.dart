@@ -68,7 +68,7 @@ class _OnboardingRouteState extends State<OnboardingRoute> {
   Widget _buildIntroPages(AppLocalizations l10n, ColorScheme colorScheme) {
     final pages = <Widget>[
       _OnboardingPage(
-        icon: Image.asset('assets/icon/pho_icon.png', width: 120),
+        icon: Image.asset('assets/icon/odraz_logo.png', width: 120),
         title: l10n.onboardingWelcome,
         description: l10n.onboardingWelcomeDesc,
       ),

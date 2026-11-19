@@ -1,18 +1,21 @@
 <br/><br/><p align="center">
-<img src="assets/icon/pho_icon.png" width="150">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/branding/odraz_lockup_dark.png">
+    <img src="assets/branding/odraz_lockup_light.png" alt="odraz" width="420">
+  </picture>
 </p>
 <h3 align="center">
-Whaleshot - view your photos and sync them to your own storage
+View your photos and sync them to your own storage
 </h3>
 
-> **Whaleshot is a fork of [Pho](https://github.com/fregie/pho) by fregie.**
+> **odraz is a fork of [Pho](https://github.com/fregie/pho) by fregie.**
 > The goal: keep everything the open-source edition of Pho already does, and add
 > **S3-compatible storage** as a synchronization target.
 
 ## About this fork
 
 Pho is a simple, serverless app that replaces the phone's native gallery and syncs photos to
-network storage without any database or server-side component. Whaleshot keeps that design and
+network storage without any database or server-side component. odraz keeps that design and
 all existing features unchanged.
 
 What this fork adds:
@@ -48,9 +51,9 @@ Android is the primary target. The iOS, Linux, macOS and Windows code is inherit
 
 ## S3 setup
 
-Whaleshot syncs to any S3-compatible service (AWS S3, Backblaze B2, MinIO, Cloudflare R2, ...).
+odraz syncs to any S3-compatible service (AWS S3, Backblaze B2, MinIO, Cloudflare R2, ...).
 
-1. **Create the bucket yourself first, and keep it empty.** Whaleshot never creates buckets, and it
+1. **Create the bucket yourself first, and keep it empty.** odraz never creates buckets, and it
    expects a bucket it owns: it does not read buckets already filled by other apps or by the Pro
    edition of Pho.
 2. Create an access key with read, write, list and delete permission on that bucket.
@@ -62,7 +65,7 @@ Whaleshot syncs to any S3-compatible service (AWS S3, Backblaze B2, MinIO, Cloud
 | Region | Optional for most providers. |
 | Bucket | The bucket you created. It must already exist. |
 | Access key / Secret key | The key pair from step 2. |
-| Root prefix | Optional folder-like prefix to keep Whaleshot's files under. |
+| Root prefix | Optional folder-like prefix to keep odraz's files under. |
 | Use HTTPS (TLS) | On by default. Certificates are always verified; turn it off only for a plain-HTTP server such as a local test instance. Self-signed HTTPS certificates are not supported. |
 | Path-style addressing | Off for AWS S3, on for Backblaze B2, MinIO and most other services. It follows the endpoint until you change it yourself. |
 
@@ -90,7 +93,7 @@ available if you download the files outside the app.
 - [x] SMB, WebDAV and NFS sync (inherited from Pho)
 - [x] S3-compatible drive backend in the Go server (`server/drive/s3`)
 - [x] S3 settings in the app (endpoint, region, bucket, credentials, path-style addressing)
-  - The bucket must be created by you beforehand and should be empty; Whaleshot does not create buckets
+  - The bucket must be created by you beforehand and should be empty; odraz does not create buckets
   - S3 credentials are stored unencrypted in the app's preferences at first
 - [ ] Encrypt stored credentials (S3 and other drives) in the app
 - [x] Tests against a containerized S3-compatible server (RustFS) in `test/docker-compose.yml`
@@ -192,6 +195,6 @@ backend.
 
 ## License and credits
 
-Released under the license in [LICENSE](LICENSE). Whaleshot is derived from
+Released under the license in [LICENSE](LICENSE). odraz is derived from
 [fregie/pho](https://github.com/fregie/pho); all credit for the original application goes to its
 author and contributors.

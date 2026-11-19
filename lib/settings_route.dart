@@ -187,7 +187,7 @@ class AboutRoute extends StatelessWidget {
               title: Text(l10n.appVersion,
                   style: Theme.of(context).textTheme.titleLarge),
               subtitle: Text(
-                'Pho - $version',
+                'odraz - $version',
                 style: TextStyle(color: Theme.of(context).colorScheme.primary),
               ),
             ),

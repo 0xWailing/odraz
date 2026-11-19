@@ -551,14 +551,14 @@ class GalleryBodyState extends State<GalleryBody>
                 Container(
                   padding: const EdgeInsets.only(right: AppSpacing.xs),
                   child: Image.asset(
-                    'assets/icon/pho_icon.png',
+                    'assets/icon/odraz_logo.png',
                     width: 40,
                     height: 40,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.xs),
                 Text(
-                  "Pho",
+                  "odraz",
                   // logo 保留专用手写字体 Sriracha-Regular
                   style: Theme.of(context)
                       .textTheme

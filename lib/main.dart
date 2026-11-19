@@ -83,13 +83,13 @@ class _AppEntryPointState extends State<_AppEntryPoint> {
     if (_needsOnboarding!) {
       return OnboardingRoute(onComplete: _finishOnboarding);
     }
-    return const MyHomePage(title: 'PHO');
+    return const MyHomePage(title: 'odraz');
   }
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-  static const String _title = 'PHO';
+  static const String _title = 'odraz';
   // This widget is the root of your application.
 
   @override

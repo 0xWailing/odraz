@@ -36,7 +36,7 @@ const (
 	s3Endpoint = "127.0.0.1:9000"
 	s3Access   = "testkey"
 	s3Secret   = "testsecret123"
-	s3Bucket   = "whaleshot-test"
+	s3Bucket   = "odraz-test"
 	s3Root     = "storage"
 )
 

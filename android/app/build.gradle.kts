@@ -72,7 +72,7 @@ android {
             applicationVariants.all {
                 outputs.all {
                     val outputImpl = this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
-                    outputImpl.outputFileName = "pho-${name}-${versionCode}-${versionName}.apk"
+                    outputImpl.outputFileName = "odraz-${name}-${versionCode}-${versionName}.apk"
                 }
             }
         }
@@ -80,7 +80,7 @@ android {
             applicationVariants.all {
                 outputs.all {
                     val outputImpl = this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
-                    outputImpl.outputFileName = "pho-${name}-${versionCode}-${versionName}.apk"
+                    outputImpl.outputFileName = "odraz-${name}-${versionCode}-${versionName}.apk"
                 }
             }
         }
