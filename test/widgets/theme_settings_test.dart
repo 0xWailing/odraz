@@ -61,41 +61,90 @@ void main() {
         const Color(0xFF000000));
   });
 
-  testWidgets('the theme row opens a dialog; choosing Dark sets the mode',
+  group('theme choice mapping', () {
+    test('mode and oled flag map to one of four choices', () {
+      expect(
+          themeChoiceOf(AdaptiveThemeMode.system, false), ThemeChoice.system);
+      expect(themeChoiceOf(AdaptiveThemeMode.light, false), ThemeChoice.light);
+      expect(themeChoiceOf(AdaptiveThemeMode.dark, false), ThemeChoice.dark);
+      expect(themeChoiceOf(AdaptiveThemeMode.dark, true), ThemeChoice.oled);
+    });
+
+    test('OLED only counts when dark is the chosen mode', () {
+      expect(
+          resolveOledFlag(savedOled: true, savedMode: AdaptiveThemeMode.dark),
+          isTrue);
+      expect(
+          resolveOledFlag(savedOled: true, savedMode: AdaptiveThemeMode.system),
+          isFalse);
+      expect(resolveOledFlag(savedOled: true, savedMode: null), isFalse);
+      expect(
+          resolveOledFlag(savedOled: true, savedMode: AdaptiveThemeMode.light),
+          isFalse);
+      expect(
+          resolveOledFlag(savedOled: false, savedMode: AdaptiveThemeMode.dark),
+          isFalse);
+    });
+  });
+
+  testWidgets('the theme row offers four choices and no separate switch',
       (tester) async {
     await tester.pumpWidget(harness());
     await tester.pumpAndSettle();
-    expect(manager(tester).mode, AdaptiveThemeMode.system);
+    expect(find.byType(SwitchListTile), findsNothing);
+    expect(find.text('System'), findsOneWidget); // the row's current value
 
     await tester.tap(find.text('Theme'));
     await tester.pumpAndSettle();
-    expect(find.byType(RadioListTile<AdaptiveThemeMode>), findsNWidgets(3));
-
-    await tester
-        .tap(find.widgetWithText(RadioListTile<AdaptiveThemeMode>, 'Dark'));
-    await tester.pumpAndSettle();
-    expect(manager(tester).mode, AdaptiveThemeMode.dark);
-    // the dialog is closed and the row now shows the choice
-    expect(find.byType(RadioListTile<AdaptiveThemeMode>), findsNothing);
-    expect(find.text('Dark'), findsOneWidget);
+    expect(find.byType(RadioListTile<ThemeChoice>), findsNWidgets(4));
+    for (final label in ['System', 'Light', 'Dark', 'OLED (pure black)']) {
+      expect(find.widgetWithText(RadioListTile<ThemeChoice>, label),
+          findsOneWidget,
+          reason: label);
+    }
   });
 
-  testWidgets('the OLED switch saves oled_dark and makes dark pure black',
+  testWidgets('choosing Dark sets dark mode with the warm black theme',
       (tester) async {
     await tester.pumpWidget(harness());
     await tester.pumpAndSettle();
-    final tile = find.widgetWithText(SwitchListTile, 'Pure black (OLED)');
-    expect(tester.widget<SwitchListTile>(tile).value, isFalse);
-
-    await tester.tap(tile);
+    await tester.tap(find.text('Theme'));
     await tester.pumpAndSettle();
-    expect((await SharedPreferences.getInstance()).getBool('oled_dark'), true);
+    await tester.tap(find.widgetWithText(RadioListTile<ThemeChoice>, 'Dark'));
+    await tester.pumpAndSettle();
+
+    expect(manager(tester).mode, AdaptiveThemeMode.dark);
+    expect(global.oledDark, isFalse);
+    expect(
+        manager(tester).darkTheme.colorScheme.surface, const Color(0xFF0C0B09));
+    expect(find.byType(RadioListTile<ThemeChoice>), findsNothing);
+    expect(find.text('Dark'), findsOneWidget); // the row shows the choice
+  });
+
+  testWidgets('choosing OLED sets dark mode with pure black, and it sticks',
+      (tester) async {
+    await tester.pumpWidget(harness());
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Theme'));
+    await tester.pumpAndSettle();
+    await tester.tap(
+        find.widgetWithText(RadioListTile<ThemeChoice>, 'OLED (pure black)'));
+    await tester.pumpAndSettle();
+
+    expect(manager(tester).mode, AdaptiveThemeMode.dark);
     expect(global.oledDark, isTrue);
+    expect((await SharedPreferences.getInstance()).getBool('oled_dark'), true);
     expect(
         manager(tester).darkTheme.colorScheme.surface, const Color(0xFF000000));
+    expect(find.text('OLED (pure black)'), findsOneWidget); // the row
 
-    await tester.tap(tile);
+    // leaving OLED turns the flag off again
+    await tester.tap(find.text('Theme'));
     await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(RadioListTile<ThemeChoice>, 'Light'));
+    await tester.pumpAndSettle();
+    expect(manager(tester).mode, AdaptiveThemeMode.light);
+    expect(global.oledDark, isFalse);
     expect((await SharedPreferences.getInstance()).getBool('oled_dark'), false);
     expect(
         manager(tester).darkTheme.colorScheme.surface, const Color(0xFF0C0B09));
