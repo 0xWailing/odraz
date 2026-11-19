@@ -1,4 +1,4 @@
-package xyz.whaling.shot
+package xyz.whaling.odraz
 
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
