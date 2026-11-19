@@ -12,6 +12,13 @@ View your photos and sync them to your own storage
 > The goal: keep everything the open-source edition of Pho already does, and add
 > **S3-compatible storage** as a synchronization target.
 
+## Download
+
+Android APKs are on the [Releases page](https://github.com/0xWailing/odraz/releases). Most phones need
+the `arm64-v8a` file. The builds are signed with a debug key, so Android will ask you to allow
+installing from your browser. The app installs under its own ID (`xyz.whaling.odraz`), next to
+Pho if you have it.
+
 ## About this fork
 
 Pho is a simple, serverless app that replaces the phone's native gallery and syncs photos to
