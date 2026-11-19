@@ -1,4 +1,4 @@
-package com.fregie.pho
+package xyz.whaling.shot
 
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
