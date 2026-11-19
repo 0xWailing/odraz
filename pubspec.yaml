@@ -128,5 +128,7 @@ flutter:
 
 flutter_icons:
   android: "launcher_icon"
-  ios: true
-  image_path: "assets/icon/odraz_logo.png"
+  ios: false
+  image_path: "assets/icon/odraz_icon_legacy.png"
+  adaptive_icon_background: "#F9FAFB"
+  adaptive_icon_foreground: "assets/icon/odraz_icon_foreground.png"
