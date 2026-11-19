@@ -29,8 +29,8 @@ What this fork adds:
 
 - **S3-compatible storage as a sync option** (AWS S3, MinIO, Cloudflare R2, Backblaze B2, Ceph, etc.)
 
-S3 support is implemented (upstream Pho has no S3 backend) and has been tested against a local
-S3-compatible server only. It has **not yet been verified against AWS S3 or Backblaze B2**. See the
+S3 support is implemented (upstream Pho has no S3 backend) and has been tested with
+**Backblaze B2** and a local S3-compatible server. It has **not yet been verified against AWS S3**. See the
 [roadmap](#roadmap) for what is still planned.
 
 ## Features
@@ -105,7 +105,8 @@ available if you download the files outside the app.
 - [ ] Encrypt stored credentials (S3 and other drives) in the app
 - [x] Tests against a containerized S3-compatible server (RustFS) in `test/docker-compose.yml`
 - [x] Keep the existing date-based object layout and `.thumbnail/` prefix on S3
-- [ ] Verify against AWS S3 and Backblaze B2
+- [x] Verify against Backblaze B2
+- [ ] Verify against AWS S3
 - [ ] Prefix-based listing for S3 (`LIST` with prefix/delimiter) with result caching, instead of re-walking the whole date tree on every call
 - [ ] Disk cache for cloud thumbnails, to cut repeat S3 requests while scrolling
 - [ ] Generate thumbnails on demand for photos that were added to the bucket by other tools
