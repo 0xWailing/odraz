@@ -118,9 +118,10 @@ available if you download the files outside the app.
 ### Requirements
 - Flutter: 3.41.4 (stable), Dart: 3.11.1
 - Go: 1.25 (toolchain go1.25.4)
-- JDK: 17
+- JDK: 17 (Gradle 8.14 does not run on JDK 25, so do not point it at a newer JDK)
 - Android SDK: compileSdk 36
-- Android NDK: used to build the embedded Go server (gomobile bind)
+- Android NDK: 28.2.13676358, used to build the embedded Go server (gomobile bind)
+- gomobile: `go install golang.org/x/mobile/cmd/gomobile@<version in go.mod>` (and `gobind`)
 - protoc + plugins: protoc-gen-go@v1.27.1, protoc-gen-go-grpc@v1.1.0, protoc_plugin@21.1.2 (Dart)
 
 ### Steps
@@ -145,8 +146,21 @@ make test
 # go test ./server/drive/ -run 'TestDriveSuite/(TestAllDrives/S3|TestS3_)'
 ```
 
-> Note: `flutter run` does not build `android/app/libs/server.aar` automatically. Run
-> `make server-aar` first, otherwise the Go server will not start.
+> The Android Gradle build rebuilds `android/app/libs/server.aar` by itself whenever the Go
+> sources change (task `buildGoServer`, so `flutter run`, `make apk` and Android Studio all
+> pick up Go changes). It needs `go` and `gomobile`; it looks in your `PATH` and in
+> `~/go/bin`. If they are missing it warns and keeps the existing `server.aar`. You can still
+> build it by hand with `make server-aar`.
+
+### Android Studio
+1. Install the **Flutter** and **Dart** plugins, then set *Settings > Languages & Frameworks >
+   Flutter > Flutter SDK path* to the folder where you cloned Flutter.
+2. Use **one** Android SDK for both Studio and Flutter (Studio's default is `~/Android/Sdk`):
+   `flutter config --android-sdk ~/Android/Sdk`. Install platform 36, build-tools 36 and NDK
+   28.2.13676358 there with the SDK Manager.
+3. Set *Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JDK* to a JDK 17.
+   The JDK bundled with newer Android Studio versions is too new for this project's Gradle.
+4. Pick a device or emulator and press Run. Hot reload works as usual.
 
 ## File storage logic
 

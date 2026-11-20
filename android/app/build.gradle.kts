@@ -91,6 +91,66 @@ flutter {
     source = "../.."
 }
 
+// Rebuilds the embedded Go server (libs/server.aar) whenever the Go sources change,
+// so `flutter run` and Android Studio always run the current server. If `go` or
+// `gomobile` cannot be found it warns and keeps the existing libs/server.aar.
+// Build it by hand with `make server-aar` if you prefer.
+val goProjectDir = rootProject.projectDir.parentFile
+val serverAar = file("libs/server.aar")
+
+fun findTool(name: String): File? {
+    val home = System.getProperty("user.home")
+    val dirs = (System.getenv("PATH") ?: "").split(File.pathSeparator) +
+        listOf("$home/go/bin", "/usr/local/go/bin", "/usr/lib/golang/bin", "/opt/homebrew/bin")
+    return dirs.map { File(it, name) }.firstOrNull { it.canExecute() }
+}
+
+val buildGoServer = tasks.register<Exec>("buildGoServer") {
+    group = "build"
+    description = "Builds libs/server.aar from ./server/run with gomobile (only when Go sources changed)"
+    val goTool = findTool("go")
+    val gomobile = findTool("gomobile")
+    val sdkDir = localProperties.getProperty("sdk.dir")
+    val ndkDir = sdkDir?.let { File(it, "ndk/${flutter.ndkVersion}") }
+    val builtAar = layout.buildDirectory.file("go/server.aar").get().asFile
+
+    onlyIf {
+        val ok = goTool != null && gomobile != null
+        if (!ok) {
+            logger.warn("buildGoServer: go/gomobile not found, using the existing libs/server.aar")
+        }
+        ok
+    }
+    workingDir = goProjectDir
+    inputs.files(
+        fileTree(goProjectDir.resolve("server")) { include("**/*.go") },
+        fileTree(goProjectDir.resolve("proto")) { include("*.go") },
+        goProjectDir.resolve("go.mod"),
+        goProjectDir.resolve("go.sum"),
+    )
+    outputs.files(builtAar, serverAar)
+    doFirst { builtAar.parentFile.mkdirs() }
+
+    environment("CGO_ENABLED", "0")
+    environment(
+        "PATH",
+        listOfNotNull(gomobile?.parent, goTool?.parent, System.getenv("PATH"))
+            .joinToString(File.pathSeparator)
+    )
+    environment("JAVA_HOME", System.getProperty("java.home"))
+    if (sdkDir != null) environment("ANDROID_HOME", sdkDir)
+    if (ndkDir != null && ndkDir.isDirectory) environment("ANDROID_NDK_HOME", ndkDir.path)
+    commandLine(
+        gomobile?.path ?: "gomobile", "bind", "-target=android", "-androidapi", "21",
+        "-ldflags", "-s -w", "-o", builtAar.path, "./server/run"
+    )
+    // gomobile also writes server-sources.jar next to the AAR; only the AAR is copied
+    // into libs so the tracked sources jar does not change on every build.
+    doLast { builtAar.copyTo(serverAar, overwrite = true) }
+}
+
+tasks.matching { it.name == "preBuild" }.configureEach { dependsOn(buildGoServer) }
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
