@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:img_syncer/widgets/odraz_lockup.dart';
 import 'package:img_syncer/desktop/settings_route.dart';
 
 import 'package:img_syncer/gallery_body.dart';
@@ -56,20 +57,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
             padding: const EdgeInsets.fromLTRB(25, 10, 10, 10),
             child: Row(
               children: [
-                Container(
-                  child: Image.asset(
-                    'assets/icon/odraz_logo.png',
-                    width: 40,
-                    height: 40,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  "odraz",
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontFamily: "Sriracha-Regular",
-                      ),
-                ),
+                const OdrazLockup(height: 44),
                 if (selectedIndex == 0)
                   Expanded(
                     child: Consumer<SettingModel>(
@@ -116,9 +104,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
               ],
             ),
           ),
-          const Divider(
-              thickness: 1,
-              height: 5),
+          const Divider(thickness: 1, height: 5),
         ]),
       ),
       body: Row(

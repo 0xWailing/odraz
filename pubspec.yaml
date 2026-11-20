@@ -108,6 +108,8 @@ flutter:
     - assets/images/broken.png
     - assets/images/gray.jpg
     - assets/icon/odraz_logo.png
+    - assets/branding/odraz_lockup_light.png
+    - assets/branding/odraz_lockup_dark.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

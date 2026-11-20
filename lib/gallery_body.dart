@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:img_syncer/design_tokens.dart';
+import 'package:img_syncer/widgets/odraz_lockup.dart';
 import 'package:img_syncer/proto/img_syncer.pb.dart';
 import 'package:img_syncer/state_model.dart';
 import 'package:img_syncer/storage/storage.dart';
@@ -545,28 +546,7 @@ class GalleryBodyState extends State<GalleryBody>
           ],
           flexibleSpace: FlexibleSpaceBar(
             centerTitle: true,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(right: AppSpacing.xs),
-                  child: Image.asset(
-                    'assets/icon/odraz_logo.png',
-                    width: 40,
-                    height: 40,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                Text(
-                  "odraz",
-                  // logo 保留专用手写字体 Sriracha-Regular
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineLarge!
-                      .copyWith(fontFamily: "Sriracha-Regular"),
-                ),
-              ],
-            ),
+            title: const OdrazLockup(height: 40),
           ),
         );
       },
