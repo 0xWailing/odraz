@@ -97,11 +97,17 @@ void main() {
     await tester.tap(find.text('Theme'));
     await tester.pumpAndSettle();
     expect(find.byType(RadioListTile<ThemeChoice>), findsNWidgets(4));
-    for (final label in ['System', 'Light', 'Dark', 'OLED (pure black)']) {
+    for (final label in ['System', 'Light', 'Dark', 'OLED (dark)']) {
       expect(find.widgetWithText(RadioListTile<ThemeChoice>, label),
           findsOneWidget,
           reason: label);
     }
+    // no description text under any option
+    for (final tile in tester.widgetList<RadioListTile<ThemeChoice>>(
+        find.byType(RadioListTile<ThemeChoice>))) {
+      expect(tile.subtitle, isNull);
+    }
+    expect(find.textContaining('battery'), findsNothing);
   });
 
   testWidgets('choosing Dark sets dark mode with the warm black theme',
@@ -127,8 +133,8 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Theme'));
     await tester.pumpAndSettle();
-    await tester.tap(
-        find.widgetWithText(RadioListTile<ThemeChoice>, 'OLED (pure black)'));
+    await tester
+        .tap(find.widgetWithText(RadioListTile<ThemeChoice>, 'OLED (dark)'));
     await tester.pumpAndSettle();
 
     expect(manager(tester).mode, AdaptiveThemeMode.dark);
@@ -136,7 +142,7 @@ void main() {
     expect((await SharedPreferences.getInstance()).getBool('oled_dark'), true);
     expect(
         manager(tester).darkTheme.colorScheme.surface, const Color(0xFF000000));
-    expect(find.text('OLED (pure black)'), findsOneWidget); // the row
+    expect(find.text('OLED (dark)'), findsOneWidget); // the row
 
     // leaving OLED turns the flag off again
     await tester.tap(find.text('Theme'));

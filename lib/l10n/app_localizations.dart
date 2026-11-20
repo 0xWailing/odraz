@@ -1043,14 +1043,8 @@ abstract class AppLocalizations {
   /// No description provided for @themeOled.
   ///
   /// In en, this message translates to:
-  /// **'OLED (pure black)'**
+  /// **'OLED (dark)'**
   String get themeOled;
-
-  /// No description provided for @themeOledDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Dark with true black. Saves battery on OLED screens.'**
-  String get themeOledDesc;
 }
 
 class _AppLocalizationsDelegate

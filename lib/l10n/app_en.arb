@@ -158,6 +158,5 @@
 "themeSystem": "System",
 "themeLight": "Light",
 "themeDark": "Dark",
-"themeOled": "OLED (pure black)",
-"themeOledDesc": "Dark with true black. Saves battery on OLED screens."
+"themeOled": "OLED (dark)"
 }

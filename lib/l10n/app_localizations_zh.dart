@@ -495,9 +495,5 @@ class AppLocalizationsZh extends AppLocalizations {
   String get themeDark => 'Dark';
 
   @override
-  String get themeOled => 'OLED (pure black)';
-
-  @override
-  String get themeOledDesc =>
-      'Dark with true black. Saves battery on OLED screens.';
+  String get themeOled => 'OLED (dark)';
 }

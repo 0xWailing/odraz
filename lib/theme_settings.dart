@@ -118,9 +118,6 @@ class _ThemeSettingsTilesState extends State<ThemeSettingsTiles> {
                 RadioListTile<ThemeChoice>(
                   value: choice,
                   title: Text(_label(choice)),
-                  subtitle: choice == ThemeChoice.oled
-                      ? Text(l10n.themeOledDesc)
-                      : null,
                 ),
               const SizedBox(height: 10),
             ],
