@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="odraz_purple_dark">#1A044C</color>
+    <color name="odraz_purple_deep">#0F0133</color>
+    <color name="odraz_purple">#6B4FD8</color>
+    <color name="odraz_blue">#4A9CFF</color>
+    <color name="odraz_aqua">#4DDCFF</color>
+    <color name="odraz_text_dark">#111827</color>
+    <color name="odraz_text_light">#F9FAFB</color>
+</resources>

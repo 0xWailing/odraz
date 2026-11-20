@@ -44,7 +44,8 @@ for f in (RES / "values").glob("*.xml"):
         colors.setdefault(c.get("name"), []).append(f.name)
 for name, files in colors.items():
     check(len(files) == 1, f"color {name} defined more than once: {files}")
-check("ic_launcher_background" in colors, "ic_launcher_background color is not defined")
+check((RES / "drawable" / "ic_launcher_background.xml").exists(), "missing drawable/ic_launcher_background.xml")
+check((RES / "drawable-xxxhdpi" / "ic_stat_odraz.png").exists(), "missing ic_stat_odraz.png")
 
 # nothing may refer to the old generated names
 old = [p for p in RES.rglob("*") if p.is_file() and "launcher_icon" in p.name]
